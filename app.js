@@ -399,7 +399,6 @@ const PLACEMENTS = [
   ['כיסא אוכל', F.diningChair, 6.4, 7.0, -Math.PI/2, true],
   ['כיסא אוכל', F.diningChair, 5.3, 6.45, 0, true],
   ['כיסא אוכל', F.diningChair, 5.7, 7.45, Math.PI, true],
-  ['אי מטבח', F.island, 6.9, 5.7, 0, true],
   ['שיש מטבח', ()=>F.counter(1.9,.65), 7.2, 4.95, 0, false],
   ['שיש מטבח', ()=>F.counter(.65,2.9), 4.85, 6.1, 0, false],
   ['אמבטיה', F.tub, 0.42, 6.25, 0, false],
@@ -463,7 +462,7 @@ function paintWall(wallId,color){
 }
 
 // ---------- persistence ----------
-const LS='apartment3d-v1', LAYOUT=3;  // bump LAYOUT on any wall/furniture change: stale saves are ignored
+const LS='apartment3d-v1', LAYOUT=4;  // bump LAYOUT on any wall/furniture change: stale saves are ignored
 function saveState(){
   try{
     const cols={};
