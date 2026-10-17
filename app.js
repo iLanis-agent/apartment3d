@@ -11,19 +11,19 @@ const WALLS = [
   {x1:0,z1:0,x2:14,z2:0,t:EXT_T,openings:[
     {at:2.0,w:1.8,type:'window'},{at:5.7,w:1.6,type:'window'},{at:8.9,w:1.6,type:'window'},
     {at:11.3,w:0.6,type:'window'},{at:13.0,w:0.8,type:'window'}]},
-  {x1:0,z1:0,x2:0,z2:6.13,t:EXT_T,openings:[
-    {at:2.0,w:1.4,type:'window'},{at:4.7,w:0.6,type:'window'}]},
+  {x1:0,z1:0,x2:0,z2:7.13,t:EXT_T,openings:[
+    {at:2.0,w:1.4,type:'window'},{at:5.7,w:0.6,type:'window'}]},
   {x1:14,z1:0,x2:14,z2:10.05,t:EXT_T,openings:[
     {at:1.2,w:0.8,type:'window'},{at:5.0,w:1.0,type:'door'},{at:7.5,w:1.8,type:'window'}]},
-  {x1:0,z1:6.13,x2:1.53,z2:6.13,t:EXT_T,openings:[{at:0.7,w:0.6,type:'window'}]},
-  {x1:1.53,z1:6.69,x2:4.48,z2:6.69,t:EXT_T,openings:[
-    {at:1.27,w:0.9,type:'door'},{at:2.3,w:1.0,type:'window'}]},
-  {x1:4.48,z1:8.0,x2:8.23,z2:8.0,t:EXT_T,openings:[{at:1.87,w:2.2,type:'window',sill:0.15,top:2.5}]},
+  {x1:0,z1:7.13,x2:1.53,z2:7.13,t:EXT_T,openings:[{at:0.7,w:0.6,type:'window'}]},
+  {x1:1.53,z1:7.69,x2:4.48,z2:7.69,t:EXT_T,openings:[
+    {at:0.6,w:0.9,type:'door'},{at:2.3,w:1.0,type:'window'}]},
+  {x1:4.48,z1:7.75,x2:8.23,z2:7.75,t:EXT_T,openings:[{at:1.5,w:2.0,type:'open'},{at:3.0,w:1.0,type:'window'}]},
   {x1:8.23,z1:10.05,x2:12.23,z2:10.05,t:EXT_T,openings:[{at:2.0,w:2.4,type:'open'}]},
   {x1:12.23,z1:10.05,x2:14,z2:10.05,t:EXT_T,openings:[{at:0.9,w:0.9,type:'window'}]},
   // interior - north bedrooms
-  {x1:4.10,z1:0,x2:4.10,z2:3.50,t:INT_T,openings:[{at:3.15,w:0.9,type:'door'}]},
-  {x1:0,z1:3.50,x2:4.10,z2:3.50,t:INT_T,openings:[]},
+  {x1:4.10,z1:0,x2:4.10,z2:3.50,t:INT_T,openings:[]},
+  {x1:0,z1:3.50,x2:4.10,z2:3.50,t:INT_T,openings:[{at:3.4,w:0.9,type:'door'}]},
   {x1:4.10,z1:2.80,x2:7.30,z2:2.80,t:INT_T,openings:[{at:2.4,w:0.9,type:'door'}]},
   {x1:7.30,z1:0,x2:7.30,z2:3.15,t:INT_T,openings:[]},
   {x1:7.30,z1:3.15,x2:10.55,z2:3.15,t:INT_T,openings:[{at:0.6,w:0.9,type:'door'}]},
@@ -33,20 +33,18 @@ const WALLS = [
   {x1:12.15,z1:0,x2:12.15,z2:1.23,t:INT_T,openings:[]},
   {x1:12.15,z1:2.53,x2:14,z2:2.53,t:INT_T,openings:[{at:0.9,w:0.8,type:'door'}]},
   // wc east (services)
-  {x1:10.55,z1:2.53,x2:12.0,z2:2.53,t:INT_T,openings:[{at:0.45,w:0.7,type:'door'}]},
-  {x1:10.55,z1:2.53,x2:10.55,z2:4.21,t:INT_T,openings:[]},
-  {x1:12.0,z1:2.53,x2:12.0,z2:4.21,t:INT_T,openings:[]},
+    {x1:10.55,z1:1.23,x2:10.55,z2:4.21,t:INT_T,openings:[]},
+  {x1:12.0,z1:1.23,x2:12.0,z2:4.21,t:INT_T,openings:[{at:2.2,w:0.8,type:'door'}]},
   {x1:10.55,z1:4.21,x2:14,z2:4.21,t:INT_T,openings:[{at:2.45,w:1.6,type:'open'}]},
   // bathroom west + kids
-  {x1:0,z1:3.60,x2:1.53,z2:3.60,t:INT_T,openings:[{at:1.05,w:0.8,type:'door'}]},
-  {x1:1.53,z1:3.60,x2:1.53,z2:6.69,t:INT_T,openings:[]},
-  {x1:1.53,z1:3.60,x2:4.48,z2:3.60,t:INT_T,openings:[{at:1.07,w:0.9,type:'door'}]},
-  {x1:4.48,z1:3.60,x2:4.48,z2:8.0,t:INT_T,openings:[]},
+  {x1:0,z1:4.60,x2:1.53,z2:4.60,t:INT_T,openings:[{at:1.1,w:0.8,type:'door'}]},
+  {x1:1.53,z1:4.60,x2:1.53,z2:7.69,t:INT_T,openings:[]},
+  {x1:1.53,z1:4.60,x2:4.48,z2:4.60,t:INT_T,openings:[{at:2.27,w:0.9,type:'door'}]},
+  {x1:4.48,z1:4.60,x2:4.48,z2:7.75,t:INT_T,openings:[]},
   // kitchen
-  {x1:4.48,z1:3.80,x2:8.23,z2:3.80,t:INT_T,openings:[{at:0.95,w:0.9,type:'door'}]},
+  {x1:4.48,z1:4.60,x2:8.23,z2:4.60,t:INT_T,openings:[{at:0.95,w:0.9,type:'door'}]},
   // long divider kitchen|dining / living
-  {x1:8.23,z1:3.80,x2:8.23,z2:10.05,t:INT_T,openings:[
-    {at:1.2,w:1.4,type:'open'},{at:4.4,w:2.8,type:'open'}]},
+  {x1:8.23,z1:4.60,x2:8.23,z2:10.05,t:INT_T,openings:[{at:1.6,w:2.8,type:'open'}]},
   // living north + east
   {x1:8.23,z1:4.60,x2:12.23,z2:4.60,t:INT_T,openings:[{at:2.0,w:2.6,type:'open'}]},
   {x1:12.23,z1:4.60,x2:12.23,z2:10.05,t:INT_T,openings:[{at:0.6,w:0.9,type:'door'}]},
@@ -59,10 +57,11 @@ const FLOORS = [
   [10.55,0,12.08,1.23,'tile'],          // wc north
   [12.08,0,14,2.53,'tile'],             // bath east
   [10.55,2.53,12.0,4.21,'tile'],        // wc east
-  [4.48,3.80,8.23,8.0,'kfloor'],        // kitchen + dining
-  [0,6.13,1.53,8.0,'deck'],            // terrace west step-up
-  [1.53,6.69,4.48,8.0,'deck'],
-  [0,8.0,11.01,11.11,'deck'],           // main terrace
+  [4.48,4.60,8.23,7.75,'kfloor'],        // kitchen + dining
+  [0,7.13,1.53,8.0,'deck'],            // terrace west step-up
+  [1.53,7.69,4.48,8.0,'deck'],
+  [0,8.0,8.23,11.11,'deck'],
+  [4.48,7.75,8.23,8.0,'deck'],           // main terrace
   [8.23,10.05,11.01,11.11,'deck'],
   [0,-1.8,3.3,0,'deck'],                // north-west deck
   [11.5,-1.8,14,0,'deck'],              // north-east deck
@@ -72,8 +71,8 @@ const FLOORS = [
 
 const LABELS = [
   [2.05,1.75,'חדר שינה ראשי'],[5.7,1.4,'חדר שינה'],[8.9,1.6,'חדר שינה'],
-  [3.0,5.25,'חדר ילדים'],[6.35,5.4,'מטבח'],[10.2,7.3,'סלון'],
-  [0.75,4.9,'רחצה'],[11.3,0.6,'שירותים'],[13.0,1.3,'אמבטיה'],[11.3,3.4,'שירותים'],
+  [3.0,6.1,'חדר ילדים'],[6.35,5.4,'מטבח'],[10.2,7.3,'סלון'],
+  [0.75,5.85,'רחצה'],[11.3,0.6,'שירותים'],[13.0,1.3,'אמבטיה'],[11.3,3.4,'שירותים'],
   [5.5,9.6,'מרפסת'],[7.4,-0.9,'גינה'],[13.3,5.0,'כניסה'],
 ];
 
@@ -388,31 +387,30 @@ const PLACEMENTS = [
   ['כיסא', F.chair, 5.0, 1.75, 0, true],
   ['מיטת יחיד', F.singleBed, 10.0, 0.8, 0, true],
   ['ארון', F.wardrobe, 9.4, 2.75, 0, true],
-  ['מיטת יחיד', F.singleBed, 2.09, 5.0, Math.PI, true],
-  ['שולחן עבודה', F.desk, 3.8, 4.1, -Math.PI/2, true],
-  ['כיסא', F.chair, 3.3, 4.1, Math.PI/2, true],
+  ['מיטת יחיד', F.singleBed, 2.09, 6.1, Math.PI, true],
+  ['שולחן עבודה', F.desk, 3.9, 6.9, -Math.PI/2, true],
+  ['כיסא', F.chair, 3.35, 6.9, Math.PI/2, true],
   ['ספה', F.sofa, 9.7, 8.9, 0, true],
   ['כורסה', F.armchair, 9.6, 6.6, Math.PI, true],
   ['שולחן סלון', F.coffeeTable, 10.6, 7.75, 0, true],
   ['מזנון טלוויזיה', F.tvConsole, 11.9, 7.75, -Math.PI/2, true],
-  ['שולחן אוכל', F.diningTable, 6.35, 7.35, 0, true],
-  ['כיסא אוכל', F.diningChair, 5.4, 7.35, Math.PI/2, true],
-  ['כיסא אוכל', F.diningChair, 7.3, 7.35, -Math.PI/2, true],
+  ['שולחן אוכל', F.diningTable, 6.35, 7.0, 0, true],
+  ['כיסא אוכל', F.diningChair, 5.4, 7.0, Math.PI/2, true],
+  ['כיסא אוכל', F.diningChair, 7.3, 7.0, -Math.PI/2, true],
   ['כיסא אוכל', F.diningChair, 6.0, 6.6, 0, true],
-  ['כיסא אוכל', F.diningChair, 6.7, 8.1, Math.PI, true],
+  ['כיסא אוכל', F.diningChair, 6.7, 7.45, Math.PI, true],
   ['אי מטבח', F.island, 6.3, 5.3, 0, true],
-  ['שיש מטבח', ()=>F.counter(1.9,.65), 7.2, 4.12, 0, false],
-  ['שיש מטבח', ()=>F.counter(.65,2.9), 4.85, 5.6, 0, false],
-  ['אמבטיה', F.tub, 0.42, 5.15, 0, false],
-  ['אסלה', F.toilet, 0.5, 4.3, Math.PI, false],
-  ['כיור', F.sink, 1.25, 5.5, Math.PI/2, false],
+  ['שיש מטבח', ()=>F.counter(1.9,.65), 7.2, 4.95, 0, false],
+  ['שיש מטבח', ()=>F.counter(.65,2.9), 4.85, 6.1, 0, false],
+  ['אמבטיה', F.tub, 0.42, 6.25, 0, false],
+  ['אסלה', F.toilet, 0.45, 5.1, Math.PI, false],
+  ['כיור', F.sink, 1.25, 6.6, Math.PI/2, false],
   ['מכונת כביסה', F.washer, 11.62, 3.85, 0, false],
   ['אמבטיה', F.tub, 13.55, 0.6, Math.PI/2, false],
   ['אסלה', F.toilet, 12.5, 1.9, Math.PI, false],
   ['כיור', F.sink, 13.62, 2.2, Math.PI, false],
   ['אסלה', F.toilet, 11.25, 0.85, Math.PI, false],
   ['כיור', F.sink, 11.75, 0.3, Math.PI, false],
-  ['אסלה', F.toilet, 11.1, 3.85, Math.PI, false],
   ['כיור', F.sink, 11.7, 2.85, 0, false],
   ['שולחן גינה', F.outTable, 2.6, 9.5, 0, true],
   ['כיסא נוח', F.lounge, 5.2, 10.2, 0, true],
