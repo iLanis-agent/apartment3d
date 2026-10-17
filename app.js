@@ -16,7 +16,7 @@ const WALLS = [
   {x1:14,z1:0,x2:14,z2:10.05,t:EXT_T,openings:[
     {at:1.2,w:0.8,type:'window'},{at:5.0,w:1.0,type:'door'},{at:7.5,w:1.8,type:'window'}]},
   {x1:0,z1:6.13,x2:1.53,z2:6.13,t:EXT_T,openings:[{at:0.7,w:0.6,type:'window'}]},
-  {x1:1.53,z1:6.90,x2:4.48,z2:6.90,t:EXT_T,openings:[
+  {x1:1.53,z1:6.69,x2:4.48,z2:6.69,t:EXT_T,openings:[
     {at:1.27,w:0.9,type:'door'},{at:2.3,w:1.0,type:'window'}]},
   {x1:4.48,z1:8.0,x2:8.23,z2:8.0,t:EXT_T,openings:[{at:1.87,w:2.2,type:'window',sill:0.15,top:2.5}]},
   {x1:8.23,z1:10.05,x2:12.23,z2:10.05,t:EXT_T,openings:[{at:2.0,w:2.4,type:'window',sill:0.15,top:2.5}]},
@@ -29,9 +29,9 @@ const WALLS = [
   {x1:7.30,z1:3.15,x2:10.55,z2:3.15,t:INT_T,openings:[{at:0.6,w:0.9,type:'door'}]},
   {x1:10.55,z1:0,x2:10.55,z2:3.15,t:INT_T,openings:[]},
   // wc north + bath east
-  {x1:10.55,z1:1.23,x2:12.08,z2:1.23,t:INT_T,openings:[{at:0.65,w:0.8,type:'door'}]},
-  {x1:12.08,z1:0,x2:12.08,z2:1.23,t:INT_T,openings:[]},
-  {x1:12.08,z1:2.53,x2:14,z2:2.53,t:INT_T,openings:[{at:0.9,w:0.8,type:'door'}]},
+  {x1:10.55,z1:1.23,x2:12.15,z2:1.23,t:INT_T,openings:[{at:0.65,w:0.8,type:'door'}]},
+  {x1:12.15,z1:0,x2:12.15,z2:1.23,t:INT_T,openings:[]},
+  {x1:12.15,z1:2.53,x2:14,z2:2.53,t:INT_T,openings:[{at:0.9,w:0.8,type:'door'}]},
   // wc east (services)
   {x1:10.55,z1:2.53,x2:12.0,z2:2.53,t:INT_T,openings:[{at:0.45,w:0.7,type:'door'}]},
   {x1:10.55,z1:2.53,x2:10.55,z2:4.21,t:INT_T,openings:[]},
@@ -39,7 +39,7 @@ const WALLS = [
   {x1:10.55,z1:4.21,x2:14,z2:4.21,t:INT_T,openings:[{at:2.45,w:1.6,type:'open'}]},
   // bathroom west + kids
   {x1:0,z1:3.60,x2:1.53,z2:3.60,t:INT_T,openings:[{at:1.05,w:0.8,type:'door'}]},
-  {x1:1.53,z1:3.60,x2:1.53,z2:6.90,t:INT_T,openings:[]},
+  {x1:1.53,z1:3.60,x2:1.53,z2:6.69,t:INT_T,openings:[]},
   {x1:1.53,z1:3.60,x2:4.48,z2:3.60,t:INT_T,openings:[{at:1.07,w:0.9,type:'door'}]},
   {x1:4.48,z1:3.60,x2:4.48,z2:8.0,t:INT_T,openings:[]},
   // kitchen
@@ -60,14 +60,14 @@ const FLOORS = [
   [12.08,0,14,2.53,'tile'],             // bath east
   [10.55,2.53,12.0,4.21,'tile'],        // wc east
   [4.48,3.80,8.23,8.0,'kfloor'],        // kitchen + dining
-  [0,6.13,1.53,6.90,'deck'],            // terrace west step-up
-  [0,6.90,4.48,8.0,'deck'],
+  [0,6.13,1.53,8.0,'deck'],            // terrace west step-up
+  [1.53,6.69,4.48,8.0,'deck'],
   [0,8.0,11.01,11.11,'deck'],           // main terrace
   [8.23,10.05,11.01,11.11,'deck'],
   [0,-1.8,3.3,0,'deck'],                // north-west deck
   [11.5,-1.8,14,0,'deck'],              // north-east deck
   [3.3,-1.8,11.5,0,'lawn'],             // garden lawn
-  [11.01,8.0,14,11.11,'lawn'],          // east/south lawn strip
+  [11.01,10.05,14,11.11,'lawn'],          // east/south lawn strip
 ];
 
 const LABELS = [
@@ -184,7 +184,7 @@ function wallPiece(wallId,cx,cz,sx,sz,y0,y1,t,mat,isGlass){
   scene.add(m);
   (wallGroups[wallId] ||= []).push(m);
   paintables.push(m);
-  if(!isGlass) colliders.push({minX:cx-sx/2,maxX:cx+sx/2,minZ:cz-sz/2,maxZ:cz+sz/2});
+  if(!isGlass&&y0<1.9) colliders.push({minX:cx-sx/2,maxX:cx+sx/2,minZ:cz-sz/2,maxZ:cz+sz/2});
   return m;
 }
 
@@ -403,10 +403,10 @@ const PLACEMENTS = [
   ['אי מטבח', F.island, 6.3, 5.3, 0, true],
   ['שיש מטבח', ()=>F.counter(3.6,.65), 6.3, 4.15, 0, false],
   ['שיש מטבח', ()=>F.counter(.65,2.9), 4.85, 5.6, 0, false],
-  ['אמבטיה', F.tub, 0.42, 5.35, 0, false],
+  ['אמבטיה', F.tub, 0.42, 5.15, 0, false],
   ['אסלה', F.toilet, 0.85, 3.95, Math.PI, false],
   ['כיור', F.sink, 1.25, 4.35, Math.PI/2, false],
-  ['מכונת כביסה', F.washer, 0.35, 6.6, 0, false],
+  ['מכונת כביסה', F.washer, 11.62, 3.85, 0, false],
   ['אמבטיה', F.tub, 13.55, 0.6, Math.PI/2, false],
   ['אסלה', F.toilet, 12.5, 1.9, Math.PI, false],
   ['כיור', F.sink, 13.5, 2.2, Math.PI, false],
@@ -496,7 +496,7 @@ let mode='walk';               // walk | arrange | paint
 let yawObj=new THREE.Object3D();
 walkCam.position.set(0,EYE,0);
 
-const orbit={theta:Math.PI/2.15, phi:0.62, r:17, cx:7, cz:4.7};
+const orbit={theta:0.12, phi:0.55, r:16, cx:7, cz:4.7};
 function updateTopCam(){
   const {theta,phi,r,cx,cz}=orbit;
   topCam.position.set(cx+r*Math.sin(phi)*Math.sin(theta), r*Math.cos(phi), cz+r*Math.sin(phi)*Math.cos(theta));
@@ -723,6 +723,7 @@ function tick(){
   renderer.render(scene,activeCam);
 }
 
+window.__apt={player,orbit,colliders,furniture,setMode,paintWall,wallGroups};
 loadState();
 ceil.visible=true;
 labelSprites.forEach(s=>s.visible=false);
