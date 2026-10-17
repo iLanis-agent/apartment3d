@@ -463,7 +463,7 @@ function paintWall(wallId,color){
 }
 
 // ---------- persistence ----------
-const LS='apartment3d-v1';
+const LS='apartment3d-v1', LAYOUT=2;  // bump LAYOUT on any wall/furniture change: stale saves are ignored
 function saveState(){
   try{
     const cols={};
@@ -471,12 +471,12 @@ function saveState(){
       if(m && m.material!==wallMat) cols[i]='#'+m.material.color.getHexString(); });
     const fur=furniture.filter(f=>f.draggable).map(f=>[
       +f.group.position.x.toFixed(2),+f.group.position.z.toFixed(2),+f.group.rotation.y.toFixed(2)]);
-    localStorage.setItem(LS,JSON.stringify({cols,fur}));
+    localStorage.setItem(LS,JSON.stringify({lv:LAYOUT,cols,fur}));
   }catch(e){}
 }
 function loadState(){
   try{
-    const s=JSON.parse(localStorage.getItem(LS)||'null'); if(!s) return;
+    const s=JSON.parse(localStorage.getItem(LS)||'null'); if(!s||s.lv!==LAYOUT) return;
     Object.entries(s.cols||{}).forEach(([id,c])=>paintWall(+id,c));
     furniture.filter(f=>f.draggable).forEach((f,i)=>{
       const p=(s.fur||[])[i]; if(!p) return;
