@@ -29,7 +29,7 @@ const WALLS = [
   {x1:7.30,z1:3.15,x2:10.55,z2:3.15,t:INT_T,openings:[{at:0.6,w:0.9,type:'door'}]},
   {x1:10.55,z1:0,x2:10.55,z2:3.15,t:INT_T,openings:[]},
   // wc north + bath east
-  {x1:10.55,z1:1.23,x2:12.15,z2:1.23,t:INT_T,openings:[{at:0.65,w:0.8,type:'door'}]},
+  {x1:10.55,z1:1.23,x2:12.15,z2:1.23,t:INT_T,openings:[{at:0.35,w:0.8,type:'door'}]},
   {x1:12.15,z1:0,x2:12.15,z2:1.23,t:INT_T,openings:[]},
   {x1:12.15,z1:2.53,x2:14,z2:2.53,t:INT_T,openings:[{at:0.9,w:0.8,type:'door'}]},
   // wc east (services)
@@ -399,7 +399,7 @@ const PLACEMENTS = [
   ['כיסא אוכל', F.diningChair, 6.4, 7.0, -Math.PI/2, true],
   ['כיסא אוכל', F.diningChair, 5.3, 6.45, 0, true],
   ['כיסא אוכל', F.diningChair, 5.7, 7.45, Math.PI, true],
-  ['אי מטבח', F.island, 6.3, 5.6, 0, true],
+  ['אי מטבח', F.island, 6.9, 5.7, 0, true],
   ['שיש מטבח', ()=>F.counter(1.9,.65), 7.2, 4.95, 0, false],
   ['שיש מטבח', ()=>F.counter(.65,2.9), 4.85, 6.1, 0, false],
   ['אמבטיה', F.tub, 0.42, 6.25, 0, false],
@@ -463,7 +463,7 @@ function paintWall(wallId,color){
 }
 
 // ---------- persistence ----------
-const LS='apartment3d-v1', LAYOUT=2;  // bump LAYOUT on any wall/furniture change: stale saves are ignored
+const LS='apartment3d-v1', LAYOUT=3;  // bump LAYOUT on any wall/furniture change: stale saves are ignored
 function saveState(){
   try{
     const cols={};
