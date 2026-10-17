@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>הדירה שלי 3D - Apartment Walkthrough</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="scene"></canvas>
+
+  <div id="topbar">
+    <div id="title">הדירה שלי <span>3D</span></div>
+    <div id="modes">
+      <button id="btn-walk" class="mode active">🚶 הליכה</button>
+      <button id="btn-arrange" class="mode">🛋️ רהיטים</button>
+      <button id="btn-paint" class="mode">🎨 צביעה</button>
+    </div>
+    <button id="btn-help" title="עזרה">?</button>
+  </div>
+
+  <div id="palette" class="hidden">
+    <div class="swatches" id="swatches"></div>
+    <input type="color" id="custom-color" value="#e8dcc8" title="צבע מותאם">
+    <button id="btn-paint-center" class="walkonly">צבע קיר מולי</button>
+  </div>
+
+  <div id="arrangebar" class="hidden">
+    <button id="btn-rotate">↻ סובב</button>
+    <button id="btn-reset">איפוס סידור</button>
+  </div>
+
+  <div id="hint"></div>
+
+  <div id="crosshair" class="hidden"></div>
+  <div id="joystick" class="hidden"><div id="joystick-knob"></div></div>
+
+  <div id="help-overlay">
+    <div id="help-card">
+      <h2>הדירה שלי בתלת-ממד</h2>
+      <p>סיור אינטראקטיבי בדירה לפי תוכנית הקומה.</p>
+      <div class="help-cols">
+        <div>
+          <h3>🚶 הליכה</h3>
+          <p><b>מחשב:</b> לחץ להתחיל, עכבר להסתכל, WASD / חצים לתנועה.</p>
+          <p><b>טלפון:</b> ג'ויסטיק בצד שמאל לתנועה, גרירה בצד ימין להסתכלות.</p>
+        </div>
+        <div>
+          <h3>🛋️ רהיטים</h3>
+          <p>מבט מלמעלה. גע/לחץ על רהיט ובחר אותו, גרור כדי להזיז, ↻ לסיבוב.</p>
+        </div>
+        <div>
+          <h3>🎨 צביעה</h3>
+          <p>בחר צבע וגע בקיר. במצב הליכה: כוון לקיר ולחץ "צבע קיר מולי".</p>
+        </div>
+      </div>
+      <p class="dim">מידות החדרים לפי התוכנית (ס"מ). מיקום דלתות וחלונות משוער מהשרטוט.</p>
+      <button id="btn-start">כניסה לדירה</button>
+    </div>
+  </div>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
