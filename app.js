@@ -490,7 +490,7 @@ function loadState(){
 }
 
 // ---------- player + cameras ----------
-const player={x:13.3,z:5.6,yaw:-Math.PI/2,pitch:0};
+const player={x:13.3,z:5.6,yaw:Math.PI/2,pitch:0};
 const EYE=1.6;
 let mode='walk';               // walk | arrange | paint
 let yawObj=new THREE.Object3D();
