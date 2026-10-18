@@ -434,6 +434,141 @@ const F = {
     return [g,.32,.32]; },
 };
 
+// ---------- catalog builders (parameterized sizes) ----------
+function sofaB(w,d=.95,c1=0x6a7f96,c2=0x5d7186,c3=0x8fa3b8){ const g=new THREE.Group();
+  box(g,w,.35,d,c1,0,.15,0,.9);
+  box(g,w,.55,.25,c2,0,.35,-(d/2-.125),.9);
+  box(g,.3,.5,d,c2,-(w/2-.15),.15,0,.9); box(g,.3,.5,d,c2,(w/2-.15),.15,0,.9);
+  const n=Math.max(1,Math.round((w-.6)/.8)), cw=(w-.6)/n;
+  for(let i=0;i<n;i++) box(g,cw-.04,.14,d-.25,c3,-(w-.6)/2+cw*(i+.5),.5,.06,.9);
+  return [g,w/2,d/2]; }
+function cornerSofa(c1=0x7b8c6e,c2=0x6a7b5d,c3=0x9db08f){ const g=new THREE.Group();
+  const m=sofaB(2.6,.95,c1,c2,c3)[0]; m.position.z=-.475; g.add(m);
+  box(g,.95,.35,.95,c1,.825,.15,.475,.9); box(g,.3,.5,.95,c2,1.15,.15,.475,.9);
+  box(g,.8,.14,.75,c3,.8,.5,.5,.9);
+  return [g,1.3,.95]; }
+function deskB(w,d=.7,top=0xb5916a){ const g=new THREE.Group();
+  box(g,w,.05,d,top,0,.72,0);
+  box(g,.05,.72,d-.05,0x8a6f4d,-(w/2-.04),0,0); box(g,.05,.72,d-.05,0x8a6f4d,(w/2-.04),0,0);
+  if(w>=1.3){ box(g,.42,.5,d-.12,0x9b7f5e,(w/2-.3),.2,0,.8); }
+  if(w>=1.2){ box(g,.5,.3,.04,0x2b2f35,-.15,.8,-d/2+.15); box(g,.08,.08,.08,0x2b2f35,-.15,.77,-d/2+.15); }
+  return [g,w/2,d/2]; }
+function lDesk(){ const g=new THREE.Group();
+  box(g,1.6,.05,.65,0xb5916a,0,.72,-.425); box(g,.65,.05,1.5,0xb5916a,.475,.72,0);
+  box(g,.05,.72,.6,0x8a6f4d,-.77,0,-.425); box(g,.05,.72,1.45,0x8a6f4d,.77,0,0);
+  box(g,.5,.3,.04,0x2b2f35,-.2,.8,-.65);
+  return [g,.8,.75]; }
+function officeChair(c=0x3b4048){ const g=new THREE.Group();
+  box(g,.5,.07,.5,c,0,.45,0,.8); box(g,.46,.55,.07,c,0,.52,-.24,.8);
+  cyl(g,.04,.04,.45,0x2a2d31,0,0,0); box(g,.56,.04,.08,0x2a2d31,0,.03,0); box(g,.08,.04,.56,0x2a2d31,0,.03,0);
+  return [g,.3,.3]; }
+function stool(c=0x9c7f6a,h=.62){ const g=new THREE.Group();
+  cyl(g,.2,.2,.05,c,0,h,0); [[-.12,-.12],[.12,-.12],[-.12,.12],[.12,.12]].forEach(([x,z])=>cyl(g,.02,.02,h,0x66533f,x,0,z,8));
+  return [g,.2,.2]; }
+function bench(w=1.2){ const g=new THREE.Group();
+  box(g,w,.06,.36,0x8a6f4d,0,.42,0); box(g,.05,.42,.32,0x66533f,-(w/2-.08),0,0); box(g,.05,.42,.32,0x66533f,(w/2-.08),0,0);
+  return [g,w/2,.18]; }
+function bedB(w,l=2.0,frame=0x8a6f4d,blanket=0x7d9bbf){ const g=new THREE.Group();
+  box(g,w,.25,l,frame,0,.12,0); box(g,w-.1,.2,l-.1,0xf2ede2,0,.34,0,.95);
+  box(g,w,.7,.1,0x6e573b,0,.12,-(l/2+.0));
+  const np=w>1.3?2:1; for(let i=0;i<np;i++) box(g,(w-.2)/np-.08,.1,.4,0xffffff,-(w-.2)/2+((w-.2)/np)*(i+.5),.47,-(l/2-.35));
+  box(g,w-.1,.07,l*.55,blanket,0,.46,l*.18,.9);
+  return [g,w/2,l/2+.05]; }
+function tableB(w,d,h=.72,top=0xb5916a){ const g=new THREE.Group();
+  box(g,w,.06,d,top,0,h,0);
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([a,b])=>box(g,.07,h,.07,0x8a6f4d,a*(w/2-.07),0,b*(d/2-.07)));
+  return [g,w/2,d/2]; }
+function roundTableB(r=.4,h=.5){ const g=new THREE.Group();
+  cyl(g,r,r,.05,0xf2f0ea,0,h,0,20); cyl(g,.04,.06,h,0x7a6a55,0,0,0); cyl(g,.18,.2,.03,0x7a6a55,0,0,0);
+  return [g,r,r]; }
+function wardrobeB(w,h=2.05,d=.6){ const g=new THREE.Group();
+  box(g,w,h,d,0x9b7f5e,0,0,0,.7);
+  const n=Math.max(1,Math.round(w/.6));
+  for(let i=1;i<n;i++) box(g,.02,h-.2,.02,0x6e573b,-w/2+w*i/n,.1,d/2+.005);
+  for(let i=0;i<n;i++) box(g,.03,.5,.03,0x6e573b,-w/2+w*(i+.5)/n+.12,.9,d/2+.02);
+  return [g,w/2,d/2]; }
+function bookshelf(w,h=1.8,d=.35){ const g=new THREE.Group();
+  box(g,.03,h,d,0x8a6f4d,-w/2+.015,0,0); box(g,.03,h,d,0x8a6f4d,w/2-.015,0,0); box(g,w,h,.02,0x7c644a,0,0,-d/2+.01);
+  const rows=Math.max(3,Math.round(h/.35)); const cols=[0xb44a3a,0x3a6ea5,0xd4a73a,0x4d8b5a,0x7a5aa5,0xcfc7b8];
+  for(let r=0;r<=rows;r++){ box(g,w-.06,.03,d,0x8a6f4d,0,r*(h-.03)/rows,0);
+    if(r<rows){ let x=-w/2+.06; let k=0; while(x<w/2-.12){ const bw=.04+((k*7)%5)*.01, bh=.2+((k*3+r)%4)*.03;
+      box(g,bw,bh,d-.08,cols[(k+r)%cols.length],x+bw/2,r*(h-.03)/rows+.03,0.0); x+=bw+.01; k++; } } }
+  return [g,w/2,d/2]; }
+function dresser(w=1.2,h=.85,d=.5){ const g=new THREE.Group();
+  box(g,w,h,d,0xa98a64,0,0,0,.7);
+  for(let i=0;i<3;i++){ box(g,w-.1,.02,.02,0x6e573b,0,.15+i*(h-.2)/3,d/2+.005); box(g,.14,.03,.03,0x4a3b2b,0,.3+i*(h-.2)/3,d/2+.02); }
+  return [g,w/2,d/2]; }
+function tvB(w=1.6){ const g=new THREE.Group();
+  box(g,w,.4,.4,0x5c4f41,0,0,0,.6); box(g,w*.72,.65,.06,0x14161a,0,.42,0,.3);
+  return [g,w/2,.22]; }
+function lamp(){ const g=new THREE.Group();
+  cyl(g,.16,.18,.04,0x33363b,0,0,0); cyl(g,.02,.02,1.4,0x33363b,0,0,0);
+  const sh=new THREE.Mesh(new THREE.CylinderGeometry(.14,.24,.3,12),mat(0xf3e6c8,.9)); sh.position.y=1.5; g.add(sh);
+  return [g,.2,.2]; }
+function plantB(k=1){ const g=new THREE.Group();
+  cyl(g,.22*k,.17*k,.35*k,0x8a6a4a,0,0,0,12);
+  const lf=new THREE.Mesh(new THREE.IcosahedronGeometry(.42*k,1),mat(0x3f7d3a,1)); lf.position.y=.78*k; lf.castShadow=true; g.add(lf);
+  return [g,.26*k,.26*k]; }
+const sizeOf=(f,k)=>()=>{const [g,hx,hz]=f(); g.scale.setScalar(k); return [g,hx*k,hz*k];};
+
+// id, Hebrew name, factory. Grouped by category for the catalog menu.
+const CATALOG = [
+  ['ספות',[
+    ['sofa2','ספה 2 מושבים',()=>sofaB(1.6)],
+    ['sofa3','ספה 3 מושבים',()=>sofaB(2.2)],
+    ['sofa4','ספה גדולה',()=>sofaB(2.8,1.0,0x8a7a6a,0x7a6a5a,0xb3a594)],
+    ['sofaL','ספה פינתית',()=>cornerSofa()],
+    ['sofaS','ספה קטנה (ספה זוגית)',()=>sofaB(1.3,.85,0xa07a6a,0x8f6a5a,0xc2a090)],
+    ['arm1','כורסה',F.armchair],
+    ['arm2','כורסה גדולה',sizeOf(F.armchair,1.25)],
+    ['arm3','כורסה קטנה',sizeOf(F.armchair,.8)],
+  ]],
+  ['שולחנות עבודה',[
+    ['deskS','שולחן עבודה קטן',()=>deskB(1.0,.5)],
+    ['deskM','שולחן עבודה רגיל',()=>deskB(1.4,.7)],
+    ['deskL','שולחן עבודה גדול',()=>deskB(1.8,.8,0x9b7f5e)],
+    ['deskC','שולחן פינתי',()=>lDesk()],
+  ]],
+  ['כיסאות',[
+    ['chairO','כיסא משרדי',()=>officeChair()],
+    ['chairO2','כיסא משרדי גדול',sizeOf(()=>officeChair(0x6a4a3a),1.15)],
+    ['chairD','כיסא אוכל',F.diningChair],
+    ['stool','שרפרף',()=>stool()],
+    ['stoolH','שרפרף בר',()=>stool(0x7d6a54,.78)],
+    ['bench','ספסל',()=>bench(1.2)],
+  ]],
+  ['מיטות',[
+    ['bed90','מיטת יחיד 90',()=>bedB(.95)],
+    ['bed120','מיטה וחצי 120',()=>bedB(1.25)],
+    ['bed160','מיטה זוגית 160',()=>bedB(1.65)],
+    ['bed180','מיטה זוגית 180',()=>bedB(1.85,2.1,0x6e573b,0xb49a7d)],
+  ]],
+  ['שולחנות',[
+    ['tblD4','שולחן אוכל קטן',()=>tableB(1.2,.8)],
+    ['tblD6','שולחן אוכל',()=>tableB(1.6,.9)],
+    ['tblD8','שולחן אוכל גדול',()=>tableB(2.2,1.0)],
+    ['tblC','שולחן סלון',()=>tableB(1.1,.6,.4)],
+    ['tblR','שולחן צד עגול',()=>roundTableB(.3,.5)],
+    ['tblR2','שולחן עגול',()=>roundTableB(.55,.72)],
+  ]],
+  ['אחסון',[
+    ['wardS','ארון 1.0 מ׳',()=>wardrobeB(1.0)],
+    ['wardM','ארון 1.8 מ׳',()=>wardrobeB(1.8)],
+    ['wardL','ארון 2.4 מ׳',()=>wardrobeB(2.4)],
+    ['shelfS','ספרייה קטנה',()=>bookshelf(.8,1.2)],
+    ['shelfL','ספרייה גבוהה',()=>bookshelf(1.6,1.9)],
+    ['dress','שידה',()=>dresser()],
+    ['tvS','מזנון טלוויזיה',()=>tvB(1.6)],
+    ['tvL','מזנון טלוויזיה גדול',()=>tvB(2.2)],
+  ]],
+  ['אחר',[
+    ['lamp','מנורת עמידה',()=>lamp()],
+    ['plantS','עציץ',()=>plantB(1)],
+    ['plantL','עציץ גדול',()=>plantB(1.5)],
+  ]],
+];
+const CAT_MAP={}; CATALOG.forEach(([,items])=>items.forEach(([id,name,f])=>CAT_MAP[id]={name,factory:f}));
+
 // name, factory, px, py (plan pixels), rotY, draggable. rot 0 = back to north; PI/2 = back to west; -PI/2 = back to east; PI = back to south
 const H=Math.PI/2, PI=Math.PI;
 const sc=(f,k)=>()=>{const [g,hx,hz]=f(); g.scale.setScalar(k); return [g,hx*k,hz*k];};
@@ -509,27 +644,72 @@ function syncCollider(item){
   const p=item.group.position;
   c.minX=p.x-item.hx; c.maxX=p.x+item.hx; c.minZ=p.z-item.hz; c.maxZ=p.z+item.hz;
 }
-for(const [name,factory,x,z,rot,draggable] of PLACEMENTS){
+function addItem(name,factory,x,z,rot,draggable,key){
   const [g,hx,hz]=factory();
   g.position.set(x,0.05,z);
   scene.add(g);
-  const item={group:g,name,draggable,bx:hx,bz:hz,hx,hz,home:{x,z,rot}};
+  const item={group:g,name,draggable,key,bx:hx,bz:hz,hx,hz};
   applyRot(item,rot);
   g.traverse(o=>{ if(o.isMesh){ o.userData.item=item; pickMeshes.push(o); } });
   furniture.push(item);
   colliders.push({minX:0,maxX:0,minZ:0,maxZ:0,item});
   syncCollider(item);
+  return item;
 }
+function removeItem(item){
+  scene.remove(item.group);
+  const fi=furniture.indexOf(item); if(fi>=0) furniture.splice(fi,1);
+  for(let i=pickMeshes.length-1;i>=0;i--) if(pickMeshes[i].userData.item===item) pickMeshes.splice(i,1);
+  const ci=colliders.findIndex(c=>c.item===item); if(ci>=0) colliders.splice(ci,1);
+}
+function resolveKey(key){
+  if(key[0]==='h'&&PLACEMENTS[+key.slice(1)]){ const [n,f,x,z,r,d]=PLACEMENTS[+key.slice(1)]; return {name:n,factory:f,home:[x,z,r]}; }
+  return CAT_MAP[key]||null;
+}
+function buildHome(){
+  PLACEMENTS.forEach(([n,f,x,z,r,d],i)=>addItem(n,f,x,z,r,d,'h'+i));
+}
+buildHome();
 
 // selection highlight
 const hl = new THREE.BoxHelper(undefined, 0x3fa7ff);
 hl.visible=false; scene.add(hl);
 let selected=null;
+let held=null, panMode=false, orbMid=null, dragOff={x:0,z:0};
+// wall-aware furniture movement: furniture can never be dragged or carried through walls
+function wallPen(item,x,z){
+  const hx=item.hx,hz=item.hz; let pen=0;
+  if(x-hx<-0.2) pen+=-0.2-(x-hx); if(x+hx>19.2) pen+=x+hx-19.2;
+  if(z-hz<-0.2) pen+=-0.2-(z-hz); if(z+hz>13.2) pen+=z+hz-13.2;
+  for(const c of colliders){ if(c.item) continue;
+    const ox=Math.min(x+hx,c.maxX)-Math.max(x-hx,c.minX), oz=Math.min(z+hz,c.maxZ)-Math.max(z-hz,c.minZ);
+    if(ox>0&&oz>0) pen+=Math.min(ox,oz); }
+  return pen;
+}
+function moveItemTo(item,tx,tz){
+  const p=item.group.position; let x=p.x,z=p.z;
+  const dx=tx-x,dz=tz-z, n=Math.max(1,Math.ceil(Math.hypot(dx,dz)/0.06)), sx=dx/n, sz=dz/n;
+  for(let i=0;i<n;i++){
+    const cur=wallPen(item,x,z)+1e-4;
+    if(wallPen(item,x+sx,z+sz)<=cur){ x+=sx; z+=sz; }
+    else if(wallPen(item,x+sx,z)<=cur){ x+=sx; }
+    else if(wallPen(item,x,z+sz)<=cur){ z+=sz; }
+    else break;
+  }
+  p.x=x; p.z=z; syncCollider(item);
+}
+function freeSpot(item,x,z){
+  if(wallPen(item,x,z)<1e-4) return [x,z];
+  for(let r=0.2;r<4;r+=0.2) for(let a=0;a<12;a++){
+    const px=x+r*Math.cos(a*Math.PI/6), pz=z+r*Math.sin(a*Math.PI/6);
+    if(wallPen(item,px,pz)<1e-4) return [px,pz]; }
+  return [x,z];
+}
 function select(item){
   selected=item;
   if(item){ hl.setFromObject(item.group); hl.visible=true; }
   else hl.visible=false;
-  hint(item ? item.name+' - גרור להזזה, ↻ לסיבוב' : '');
+  hint(item ? item.name+(item.draggable?' - גרור להזזה, ↻ לסיבוב, 🗑 להסרה':' - רהיט קבוע') : '');
 }
 
 // ---------- paint ----------
@@ -556,25 +736,30 @@ function paintWall(wallId,color){
 }
 
 // ---------- persistence ----------
-const LS='apartment3d-v1', LAYOUT=5;  // bump LAYOUT on any wall/furniture change: stale saves are ignored
+const LS='apartment3d-v1', LAYOUT=6;  // bump LAYOUT on any wall/furniture change: stale saves are ignored
 function saveState(){
   try{
     const cols={};
     wallGroups.forEach((ms,i)=>{ const m=ms.find(m=>m.material!==glassMat);
       if(m && m.material!==wallMat) cols[i]='#'+m.material.color.getHexString(); });
-    const fur=furniture.filter(f=>f.draggable).map(f=>[
-      +f.group.position.x.toFixed(2),+f.group.position.z.toFixed(2),+f.group.rotation.y.toFixed(2)]);
-    localStorage.setItem(LS,JSON.stringify({lv:LAYOUT,cols,fur}));
+    const items=furniture.filter(f=>f.draggable).map(f=>[f.key,+f.group.position.x.toFixed(2),+f.group.position.z.toFixed(2),+f.group.rotation.y.toFixed(2)]);
+    localStorage.setItem(LS,JSON.stringify({lv:LAYOUT,cols,items}));
   }catch(e){}
 }
+function clearMovable(){ furniture.filter(f=>f.draggable).forEach(removeItem); }
 function loadState(){
   try{
-    const s=JSON.parse(localStorage.getItem(LS)||'null'); if(!s||s.lv!==LAYOUT) return;
+    const s=JSON.parse(localStorage.getItem(LS)||'null'); if(!s) return;
+    let list=null;
+    if(s.lv===6) list=s.items;
+    else if(s.lv===5){ const idx=PLACEMENTS.map((p,i)=>i).filter(i=>PLACEMENTS[i][5]); list=(s.fur||[]).map((p,k)=>['h'+idx[k],p[0],p[1],p[2]]); }
+    else return;
     Object.entries(s.cols||{}).forEach(([id,c])=>paintWall(+id,c));
-    furniture.filter(f=>f.draggable).forEach((f,i)=>{
-      const p=(s.fur||[])[i]; if(!p) return;
-      f.group.position.x=p[0]; f.group.position.z=p[1]; applyRot(f,p[2]); syncCollider(f);
-    });
+    if(list&&list.length){
+      clearMovable();
+      for(const [key,x,z,r] of list){ const d=resolveKey(key); if(d) addItem(d.name,d.factory,x,z,r,true,key); }
+    }
+    saveState();
   }catch(e){}
 }
 
@@ -600,7 +785,9 @@ function updateTopCam(){
 
 const keys={};
 addEventListener('keydown',e=>{ keys[e.code]=true;
-  if(e.code==='KeyR'&&mode==='arrange'&&selected) rotateSelected(); });
+  if(e.code==='KeyR'){ if(mode==='arrange'&&selected) rotateSelected(); else if(mode==='walk'&&held) rotateItem(held); }
+  if(e.code==='KeyE'&&mode==='walk'){ if(held) release(); else grab(); }
+  if((e.code==='Delete'||e.code==='Backspace')&&mode==='arrange') removeSelected(); });
 addEventListener('keyup',e=>keys[e.code]=false);
 
 let locked=false;
@@ -638,11 +825,12 @@ canvas.addEventListener('pointerdown',e=>{
   if(mode==='walk') return;
   orbPtrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(orbPtrs.size===2){
-    const [a,b]=[...orbPtrs.values()]; orbDist=Math.hypot(a.x-b.x,a.y-b.y);
+    const [a,b]=[...orbPtrs.values()]; orbDist=Math.hypot(a.x-b.x,a.y-b.y); orbMid={x:(a.x+b.x)/2,y:(a.y+b.y)/2}; dragItem=null;
   } else {
     tapInfo={x:e.clientX,y:e.clientY,t:performance.now()};
     const hit=pick(e.clientX,e.clientY,pickMeshes);
-    dragItem=(mode==='arrange'&&hit&&hit.object.userData.item.draggable)?hit.object.userData.item:null;
+    dragItem=(mode==='arrange'&&!panMode&&e.button===0&&!e.shiftKey&&hit&&hit.object.userData.item.draggable)?hit.object.userData.item:null;
+    if(dragItem){ const fp=floorPoint(e.clientX,e.clientY); if(fp){ dragOff={x:fp.x-dragItem.group.position.x,z:fp.z-dragItem.group.position.z}; } else dragOff={x:0,z:0}; select(dragItem); }
   }
 });
 canvas.addEventListener('pointermove',e=>{
@@ -664,22 +852,30 @@ canvas.addEventListener('pointermove',e=>{
   if(tapInfo&&Math.hypot(e.clientX-tapInfo.x,e.clientY-tapInfo.y)>9) tapInfo=null;
   if(dragItem){
     const pt=floorPoint(e.clientX,e.clientY);
-    if(pt){
-      dragItem.group.position.x=Math.max(0,Math.min(18.6,pt.x));
-      dragItem.group.position.z=Math.max(0,Math.min(12.5,pt.z));
-      syncCollider(dragItem);
-      hl.setFromObject(dragItem.group);
-    }
+    if(pt){ moveItemTo(dragItem,pt.x-dragOff.x,pt.z-dragOff.z); hl.setFromObject(dragItem.group); }
     return;
   }
-  if(orbPtrs.size===1){ orbit.theta-=dx*0.006; orbit.phi=Math.max(0.25,Math.min(1.25,orbit.phi-dy*0.005)); updateTopCam(); }
+  if(orbPtrs.size===1){
+    if(panMode||(e.buttons&6)||e.shiftKey) panView(dx,dy);
+    else { orbit.theta-=dx*0.006; orbit.phi=Math.max(0.05,Math.min(1.25,orbit.phi-dy*0.005)); updateTopCam(); }
+  }
   else if(orbPtrs.size===2){
     const [a,b]=[...orbPtrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y);
+    const mid={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+    if(orbMid) panView(mid.x-orbMid.x,mid.y-orbMid.y); orbMid=mid;
     orbit.r=Math.max(6,Math.min(80,orbit.r*orbDist/Math.max(d,1))); orbDist=d; updateTopCam();
   }
 });
+function panView(dx,dy){
+  const k=2*orbit.r*Math.tan(THREE.MathUtils.degToRad(topCam.fov/2))/innerHeight;
+  const rx=Math.cos(orbit.theta), rz=-Math.sin(orbit.theta), fx=-Math.sin(orbit.theta), fz=-Math.cos(orbit.theta);
+  const ky=k/Math.max(.35,Math.cos(orbit.phi));
+  orbit.cx=Math.max(-3,Math.min(22,orbit.cx-rx*dx*k+fx*dy*ky));
+  orbit.cz=Math.max(-4,Math.min(17,orbit.cz-rz*dx*k+fz*dy*ky));
+  updateTopCam();
+}
 function endPtr(e){
-  orbPtrs.delete(e.pointerId);
+  orbPtrs.delete(e.pointerId); if(orbPtrs.size<2) orbMid=null;
   if(e.pointerId===joyId){ joyId=null; joyDX=joyDY=0; knob.style.transform=''; joyEl.classList.add('hidden'); }
   if(e.pointerId===lookId) lookId=null;
   if(dragItem){ saveState(); dragItem=null; return; }
@@ -694,6 +890,7 @@ function endPtr(e){
     }
   }
 }
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
 canvas.addEventListener('pointerup',endPtr);
 canvas.addEventListener('pointercancel',endPtr);
 canvas.addEventListener('wheel',e=>{
@@ -719,6 +916,7 @@ function floorPoint(cx,cy){
 function collide(nx,nz){
   const r=0.25;
   for(const c of colliders){
+    if(held&&c.item===held) continue;
     if(nx>c.minX-r&&nx<c.maxX+r&&nz>c.minZ-r&&nz<c.maxZ+r){
       return true;
     }
@@ -739,6 +937,9 @@ function setMode(m){
   $('btn-'+m).classList.add('active');
   $('palette').classList.toggle('hidden',m!=='paint');
   $('arrangebar').classList.toggle('hidden',m!=='arrange');
+  $('walkbar').classList.toggle('hidden',m!=='walk');
+  $('panbtn').classList.toggle('hidden',m==='walk');
+  $('catalog').classList.add('hidden'); release();
   if(document.exitPointerLock&&locked) document.exitPointerLock();
   const walking=m==='walk';
   ceil.visible=walking;
@@ -759,17 +960,82 @@ $('btn-start').onclick=()=>{
   $('help-overlay').style.display='none';
   if(mode==='walk'&&!isTouch) canvas.requestPointerLock();
 };
-function rotateSelected(){
-  if(!selected) return;
-  applyRot(selected,selected.group.rotation.y+Math.PI/2); syncCollider(selected);
-  hl.setFromObject(selected.group); saveState();
+function rotateItem(item){
+  const oldRot=item.group.rotation.y, p=item.group.position;
+  const before=wallPen(item,p.x,p.z);
+  applyRot(item,oldRot+Math.PI/2);
+  if(wallPen(item,p.x,p.z)>before+1e-4){
+    const [fx,fz]=freeSpot(item,p.x,p.z);
+    if(wallPen(item,fx,fz)>before+1e-4){ applyRot(item,oldRot); hint('אין מקום לסובב כאן'); return false; }
+    p.x=fx; p.z=fz;
+  }
+  syncCollider(item); if(item===selected) hl.setFromObject(item.group); saveState(); return true;
 }
+function rotateSelected(){ if(selected&&selected.draggable) rotateItem(selected); }
+function removeSelected(){
+  if(!selected) return;
+  if(!selected.draggable){ hint('רהיט קבוע - אי אפשר להסיר'); return; }
+  const n=selected.name; removeItem(selected); select(null); saveState(); hint('הוסר: '+n);
+}
+$('btn-remove').onclick=removeSelected;
+// ----- walk mode: grab and carry furniture -----
+function holdDist(it){ return Math.max(it.hx,it.hz)+0.8; }
+function updateWalkBtns(){
+  $('btn-grab').textContent=held?'✋ שחרר':'✋ אחוז';
+  $('btn-walk-rot').classList.toggle('hidden',!held);
+  $('btn-walk-del').classList.toggle('hidden',!held);
+}
+function release(){ if(held){ held=null; saveState(); } if(typeof updateWalkBtns==='function') updateWalkBtns(); hl.visible=false; }
+function grab(){
+  ray.setFromCamera(new THREE.Vector2(0,0),walkCam);
+  const hits=ray.intersectObjects(pickMeshes.filter(m=>m.userData.item.draggable),false);
+  const h=hits[0];
+  if(!h||h.distance>4.5){ hint('כוון את העיגול לרהיט (עד 4 מטר) ולחץ אחוז'); return; }
+  held=h.object.userData.item; updateWalkBtns(); hint(held.name+' - הזז כדי לשאת, ↻ לסיבוב, שחרר להנחה',3500);
+}
+$('btn-grab').onclick=()=>{ if(held) { release(); hint('הונח'); } else grab(); };
+$('btn-walk-rot').onclick=()=>{ if(held) rotateItem(held); };
+$('btn-walk-del').onclick=()=>{ if(!held) return; const it=held; held=null; removeItem(it); saveState(); updateWalkBtns(); hint('הוסר: '+it.name); };
+function carryStep(){
+  if(!held) return;
+  const d=holdDist(held), tx=player.x-Math.sin(player.yaw)*d, tz=player.z-Math.cos(player.yaw)*d;
+  moveItemTo(held,tx,tz);
+  if(Math.hypot(held.group.position.x-player.x,held.group.position.z-player.z)>d+2.2){ release(); hint('הרהיט נתקע - הונח'); }
+}
+// ----- catalog -----
+let catTab=0;
+function buildCatalog(){
+  const tabs=$('cat-tabs'), grid=$('cat-grid'); tabs.innerHTML=''; grid.innerHTML='';
+  CATALOG.forEach(([title],i)=>{ const b=document.createElement('button'); b.className='cat-tab'+(i===catTab?' sel':''); b.textContent=title;
+    b.onclick=()=>{ catTab=i; buildCatalog(); }; tabs.appendChild(b); });
+  CATALOG[catTab][1].forEach(([id,name,f])=>{
+    const [g,hx,hz]=f();
+    const b=document.createElement('button'); b.className='cat-item';
+    b.innerHTML='<b>'+name+'</b><span>'+(hx*2).toFixed(1)+' × '+(hz*2).toFixed(1)+' מ׳</span>';
+    b.onclick=()=>addFromCatalog(id); grid.appendChild(b); });
+}
+function openCatalog(){ buildCatalog(); $('catalog').classList.remove('hidden'); }
+function addFromCatalog(id){
+  const d=CAT_MAP[id]; if(!d) return;
+  $('catalog').classList.add('hidden');
+  let x,z;
+  if(mode==='walk'){ release(); x=player.x-Math.sin(player.yaw)*2.0; z=player.z-Math.cos(player.yaw)*2.0; }
+  else { const pt=floorPoint(innerWidth/2,innerHeight/2); x=pt?pt.x:orbit.cx; z=pt?pt.z:orbit.cz; x=Math.max(0.5,Math.min(18,x)); z=Math.max(0.5,Math.min(12.2,z)); }
+  const it=addItem(d.name,d.factory,x,z,mode==='walk'?player.yaw+Math.PI:0,true,id);
+  const [fx,fz]=freeSpot(it,x,z); it.group.position.x=fx; it.group.position.z=fz; syncCollider(it);
+  if(mode==='walk'){ held=it; updateWalkBtns(); hint('נוסף: '+d.name+' - הזז כדי למקם, שחרר להנחה',3500); }
+  else { select(it); hint('נוסף: '+d.name+' - גרור למקום'); }
+  saveState();
+}
+$('btn-add').onclick=openCatalog; $('btn-walk-add').onclick=openCatalog;
+$('cat-close').onclick=()=>$('catalog').classList.add('hidden');
+$('btn-pan').onclick=()=>{ panMode=!panMode; $('btn-pan').classList.toggle('active',panMode); hint(panMode?'גרור באצבע אחת כדי להזיז את המבט':'גרור לסיבוב. שתי אצבעות: זום והזזה'); };
 $('btn-rotate').onclick=rotateSelected;
 $('btn-reset').onclick=()=>{
-  localStorage.removeItem(LS);
-  for(const f of furniture){ if(!f.draggable) continue;
-    f.group.position.set(f.home.x,0.05,f.home.z); applyRot(f,f.home.rot); syncCollider(f); }
-  select(null); hint('הסידור אופס');
+  localStorage.removeItem(LS); release(); select(null);
+  clearMovable();
+  PLACEMENTS.forEach(([n,f,x,z,r,d],i)=>{ if(d) addItem(n,f,x,z,r,true,'h'+i); });
+  hint('הסידור אופס');
 };
 $('btn-paint-center').onclick=()=>{
   ray.setFromCamera(new THREE.Vector2(0,0),walkCam);
@@ -804,16 +1070,22 @@ function tick(){
     }
     player.x=Math.max(-1,Math.min(19.5,player.x));
     player.z=Math.max(-1,Math.min(13.5,player.z));
+    carryStep();
     walkCam.position.set(player.x,EYE,player.z);
     walkCam.rotation.set(0,0,0);
     walkCam.rotation.order='YXZ';
     walkCam.rotation.y=player.yaw; walkCam.rotation.x=player.pitch;
   }
+  if(mode!=='walk'){
+    let kx=0,ky=0; if(keys.KeyA||keys.ArrowLeft)kx-=1; if(keys.KeyD||keys.ArrowRight)kx+=1; if(keys.KeyW||keys.ArrowUp)ky-=1; if(keys.KeyS||keys.ArrowDown)ky+=1;
+    if(kx||ky){ const sp=orbit.r*0.9*dt; const rx=Math.cos(orbit.theta),rz=-Math.sin(orbit.theta),fx=-Math.sin(orbit.theta),fz=-Math.cos(orbit.theta);
+      orbit.cx=Math.max(-3,Math.min(22,orbit.cx+(rx*kx-fx*ky)*sp)); orbit.cz=Math.max(-4,Math.min(17,orbit.cz+(rz*kx-fz*ky)*sp)); updateTopCam(); } }
   renderer.render(scene,activeCam);
 }
 
-window.__apt={topCam,player,orbit,colliders,furniture,setMode,paintWall,wallGroups,mx,mz,resetView,updateTopCam,THREE};
+window.__apt={moveItemTo,wallPen,addFromCatalog,openCatalog,removeItem,addItem,rotateItem,panView,grab,release,get held(){return held;},get selected(){return selected;},select,CAT_MAP,CATALOG,topCam,player,orbit,colliders,furniture,setMode,paintWall,wallGroups,mx,mz,resetView,updateTopCam,THREE};
 loadState();
+$('walkbar').classList.remove('hidden'); $('panbtn').classList.add('hidden'); updateWalkBtns();
 ceil.visible=true;
 labelSprites.forEach(s=>s.visible=false);
 fitOrbit(); updateTopCam();
