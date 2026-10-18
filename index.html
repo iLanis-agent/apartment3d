@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>הדירה שלי 3D - Apartment Walkthrough</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=14">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
 </script>
@@ -37,7 +37,7 @@
     <button id="btn-reset">איפוס</button>
   </div>
 
-  <div id="brushbar" class="hidden">
+  <div id="brushbar" class="hidden" style="position:absolute;left:8px;right:8px;bottom:70px;z-index:21;display:flex;flex-direction:column;gap:6px">
     <div class="bb-row"><div class="swatches" id="bb-swatches"></div><input type="color" id="bb-color" value="#e8dcc8" title="צבע מותאם"></div>
     <div class="bb-row">
       <button class="tl sel" data-t="brush">מכחול</button><button class="tl" data-t="line">קו</button><button class="tl" data-t="rect">ריבוע</button><button class="tl" data-t="circle">עיגול</button><button class="tl" data-t="wall">קיר מלא</button>
@@ -99,6 +99,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="app.js?v=13"></script>
+<script type="module" src="app.js?v=14"></script>
 </body>
 </html>
