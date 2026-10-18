@@ -37,11 +37,23 @@
     <button id="btn-reset">איפוס</button>
   </div>
 
+  <div id="brushbar" class="hidden">
+    <div class="bb-row"><div class="swatches" id="bb-swatches"></div><input type="color" id="bb-color" value="#e8dcc8" title="צבע מותאם"></div>
+    <div class="bb-row">
+      <button class="tl sel" data-t="brush">מכחול</button><button class="tl" data-t="line">קו</button><button class="tl" data-t="rect">ריבוע</button><button class="tl" data-t="circle">עיגול</button><button class="tl" data-t="wall">קיר מלא</button>
+    </div>
+    <div class="bb-row">
+      <button class="sz" data-r="0.015">דק</button><button class="sz sel" data-r="0.035">בינוני</button><button class="sz" data-r="0.07">עבה</button>
+      <button id="btn-pen">✏️ צייר</button><button id="btn-pundo">↶</button><button id="btn-pclear">🗑 נקה</button>
+    </div>
+  </div>
+
   <div id="walkbar">
     <button id="btn-grab">✋ אחוז</button>
     <button id="btn-walk-add">➕ הוסף</button>
     <button id="btn-walk-rot" class="hidden">↻ סובב</button>
     <button id="btn-walk-del" class="hidden">🗑 הסר</button>
+    <button id="btn-brush">🖌 מכחול</button>
   </div>
   <div id="panbtn" class="hidden"><button id="btn-pan" title="הזז מבט">✥ הזז מבט</button></div>
 
@@ -87,6 +99,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="app.js?v=12"></script>
+<script type="module" src="app.js?v=13"></script>
 </body>
 </html>
