@@ -1239,7 +1239,7 @@ function addStroke(st){
 function aimPoint(){
   ray.setFromCamera(new THREE.Vector2(0,0),walkCam);
   const hits=ray.intersectObjects(paintables.filter(m=>m.material!==glassMat),false);
-  const h=hits[0]; if(!h||h.distance>5||!h.face) return null;
+  const h=hits[0]; if(!h||h.distance>12||!h.face) return null;
   const n=h.face.normal; if(Math.abs(n.y)>0.5) return null;
   return {p:h.point.clone(),nx:Math.round(n.x),nz:Math.round(n.z),wallId:h.object.userData.wallId};
 }
@@ -1283,7 +1283,7 @@ function penPress(){
   if(mode!=='walk'||!brushOn) return;
   if(tool==='wall'){ const a=aimPoint(); if(a) paintWall(a.wallId,paintColor); else hint('כוון אל קיר'); return; }
   if(tool==='brush'){
-    if(penDown){ finishStroke(); setPen(false); } else { const a=aimPoint(); if(!a){ hint('כוון אל קיר'); return; } setPen(true); }
+    if(penDown){ finishStroke(); setPen(false); } else { const a=aimPoint(); if(!a){ hint('כוון אל קיר'); return; } setPen(true); hint('מצייר... הזז את המבט, ולחץ שוב לסיום',3500); }
     return;
   }
   // line / rect / circle: press once for the start, again for the end
@@ -1304,13 +1304,14 @@ function setBrush(on){
   brushOn=on; if(!on) cancelPen();
   $('brushbar').classList.toggle('hidden',!on);
   $('btn-brush').classList.toggle('active',on);
-  if(on) hint('כוון אל קיר ולחץ ✏️ צייר, ואז הזז את המבט');
+  if(on) hint('כוון את העיגול אל קיר ולחץ ✏️ צייר, ואז הזז את המבט',5000);
 }
 // UI wiring
 (function(){
   const sw=$('bb-swatches');
   SWATCHES.forEach(c=>{ const b=document.createElement('div'); b.className='swatch'; b.style.background=c;
     b.onclick=()=>{ paintColor=c; sw.querySelectorAll('.swatch').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); }; sw.appendChild(b); });
+  paintColor=SWATCHES[9]; sw.children[9].classList.add('sel'); document.querySelectorAll('#swatches .swatch').forEach((x,i)=>x.classList.toggle('sel',i===9));
   $('bb-color').oninput=e=>{ paintColor=e.target.value; sw.querySelectorAll('.swatch').forEach(x=>x.classList.remove('sel')); };
   document.querySelectorAll('.tl').forEach(b=>b.onclick=()=>setTool(b.dataset.t));
   document.querySelectorAll('.sz').forEach(b=>b.onclick=()=>{ brushR=+b.dataset.r; document.querySelectorAll('.sz').forEach(x=>x.classList.toggle('sel',x===b)); });
