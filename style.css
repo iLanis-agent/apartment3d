@@ -11,7 +11,7 @@ html,body,#app { width:100%; height:100%; overflow:hidden; background:#1a1d22;
 #title { color:#fff; font-weight:700; font-size:17px; text-shadow:0 1px 4px rgba(0,0,0,.6); }
 #title span { color:#8ecdf0; font-weight:300; }
 #modes { display:flex; gap:6px; margin-inline-start:auto; }
-.mode, #btn-help, #btn-north, #btn-rotate, #btn-reset, #btn-paint-center {
+.mode, #btn-help, #btn-north, #btn-add, #btn-remove, #btn-pan, #walkbar button, .cat-tab, #cat-close, #btn-rotate, #btn-reset, #btn-paint-center {
   border:1px solid rgba(255,255,255,.25); background:rgba(20,22,26,.72); color:#eee;
   border-radius:20px; padding:8px 14px; font-size:14px; cursor:pointer;
   backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
@@ -59,3 +59,21 @@ html,body,#app { width:100%; height:100%; overflow:hidden; background:#1a1d22;
   #title { font-size:14px; }
   .mode { padding:7px 10px; font-size:12px; }
 }
+
+#arrangebar button, #walkbar button { padding:8px 11px; font-size:14px; }
+#walkbar { position:absolute; bottom:calc(14px + env(safe-area-inset-bottom)); right:50%; transform:translateX(50%);
+  display:flex; gap:8px; z-index:20; }
+#panbtn { position:absolute; top:calc(62px + env(safe-area-inset-top)); left:12px; z-index:20; }
+#btn-pan.active { background:#2f7fc4; border-color:#5fb0ef; color:#fff; }
+#catalog { position:absolute; left:0; right:0; bottom:0; height:56%; z-index:40; display:flex; flex-direction:column;
+  background:rgba(24,27,32,.97); border-top:1px solid rgba(255,255,255,.2); border-radius:18px 18px 0 0; color:#eee;
+  padding-bottom:env(safe-area-inset-bottom); }
+#cat-head { display:flex; align-items:center; justify-content:space-between; padding:12px 16px 6px; font-size:17px; }
+#cat-close { padding:4px 12px; }
+#cat-tabs { display:flex; gap:6px; padding:6px 12px; overflow-x:auto; flex:none; }
+.cat-tab { white-space:nowrap; padding:6px 12px; font-size:14px; }
+.cat-tab.sel { background:#2f7fc4; border-color:#5fb0ef; color:#fff; }
+#cat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px; padding:8px 12px 14px; overflow-y:auto; flex:1; touch-action:pan-y; }
+.cat-item { display:flex; flex-direction:column; gap:4px; align-items:flex-start; text-align:right; padding:10px 12px; border-radius:12px;
+  border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.07); color:#eee; font-size:14px; cursor:pointer; }
+.cat-item span { font-size:12px; color:#9fb4c4; }
