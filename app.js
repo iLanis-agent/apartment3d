@@ -1091,3 +1091,81 @@ labelSprites.forEach(s=>s.visible=false);
 fitOrbit(); updateTopCam();
 $('btn-north').onclick=()=>{ resetView(); hint('מבט צפוני כמו בתוכנית'); };
 tick();
+
+// ---------- global saves (shared backend) ----------
+const API='https://apartment3d-saves.ilanis-likely.workers.dev';
+const TK='apartment3d-tokens';
+const myTokens=()=>{ try{return JSON.parse(localStorage.getItem(TK)||'{}');}catch(e){return {};} };
+function snapshot(){
+  const cols={};
+  wallGroups.forEach((ms,i)=>{ const m=ms.find(m=>m.material!==glassMat);
+    if(m && m.material!==wallMat) cols[i]='#'+m.material.color.getHexString(); });
+  const items=furniture.filter(f=>f.draggable).map(f=>[f.key,+f.group.position.x.toFixed(2),+f.group.position.z.toFixed(2),+f.group.rotation.y.toFixed(2)]);
+  return {lv:LAYOUT,cols,items};
+}
+function applySnapshot(s){
+  if(!s||s.lv!==LAYOUT||!Array.isArray(s.items)) return false;
+  release(); select(null);
+  wallGroups.forEach(ms=>ms.forEach(m=>{ if(m.material!==glassMat && m.material!==wallMat){ m.material=wallMat; } }));
+  Object.entries(s.cols||{}).forEach(([id,c])=>paintWall(+id,c));
+  clearMovable();
+  for(const [key,x,z,r] of s.items){ const d=resolveKey(key); if(d) addItem(d.name,d.factory,x,z,r,true,key); }
+  saveState(); return true;
+}
+function rndTok(){ const a=new Uint8Array(24); crypto.getRandomValues(a); return [...a].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function api(path,opt){
+  const r=await fetch(API+path,opt); let j=null; try{ j=await r.json(); }catch(e){}
+  if(!r.ok) throw new Error((j&&j.error)||('HTTP '+r.status));
+  return j;
+}
+async function doSave(){
+  const name=(prompt('שם לשמירה (עד 40 תווים):','')||'').trim(); if(!name) return;
+  const lastA=localStorage.getItem('apartment3d-author')||'';
+  const author=(prompt('השם שלך (לא חובה, יופיע ברשימה הציבורית):',lastA)||'').trim();
+  localStorage.setItem('apartment3d-author',author);
+  const token=rndTok();
+  hint('שומר...',8000);
+  try{
+    const r=await api('/saves',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,author,token,data:snapshot()})});
+    const t=myTokens(); t[r.id]=token; localStorage.setItem(TK,JSON.stringify(t));
+    hint('נשמר: '+name+' (ייתכן שיופיע ברשימה אחרי כדקה)',5000);
+  }catch(e){ hint('השמירה נכשלה: '+(navigator.onLine?e.message:'אין חיבור'),5000); }
+}
+async function openLoad(){
+  const sh=$('loadsheet'); sh.classList.remove('hidden');
+  const body=$('load-body'); body.innerHTML='<div class="ls-msg">טוען...</div>';
+  try{
+    const r=await api('/saves'); const mine=myTokens();
+    if(!r.saves.length){ body.innerHTML='<div class="ls-msg">אין עדיין שמירות</div>'; return; }
+    body.innerHTML='';
+    for(const s of r.saves){
+      const old=s.lv!==LAYOUT;
+      const row=document.createElement('div'); row.className='ls-row'+(old?' old':'');
+      const d=new Date(s.ts).toLocaleString('he-IL',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'});
+      row.innerHTML='<div class="ls-main"><b>'+esc(s.name)+'</b><span>'+(s.author?esc(s.author)+' · ':'')+d+' · '+s.n+' פריטים'+(old?' · גרסה ישנה':'')+'</span></div>';
+      const go=document.createElement('button'); go.textContent='טען'; go.disabled=old;
+      go.onclick=async()=>{
+        go.textContent='...';
+        try{ const f=await api('/saves/'+s.id);
+          if(applySnapshot(f.data)){ sh.classList.add('hidden'); hint('נטען: '+s.name); } else { go.textContent='טען'; hint('השמירה לא תואמת לגרסה הנוכחית'); }
+        }catch(e){ go.textContent='טען'; hint('הטעינה נכשלה: '+e.message,4000); }
+      };
+      row.appendChild(go);
+      if(mine[s.id]){
+        const del=document.createElement('button'); del.textContent='🗑'; del.title='מחק';
+        del.onclick=async()=>{
+          if(!confirm('למחוק את "'+s.name+'" לכולם?')) return;
+          try{ await api('/saves/'+s.id,{method:'DELETE',headers:{'X-Token':mine[s.id]}});
+            const t=myTokens(); delete t[s.id]; localStorage.setItem(TK,JSON.stringify(t)); row.remove(); hint('נמחק');
+          }catch(e){ hint('המחיקה נכשלה: '+e.message,4000); }
+        };
+        row.appendChild(del);
+      }
+      body.appendChild(row);
+    }
+  }catch(e){ body.innerHTML='<div class="ls-msg">שגיאה בטעינת הרשימה: '+esc(navigator.onLine?e.message:'אין חיבור')+'</div>'; }
+}
+$('btn-save').onclick=doSave;
+$('btn-load').onclick=openLoad;
+$('load-close').onclick=()=>$('loadsheet').classList.add('hidden');
