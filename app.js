@@ -363,6 +363,11 @@ const F = {
     box(g,.3,.5,.95,0x5d7186,-1.05,.15,0,.9); box(g,.3,.5,.95,0x5d7186,1.05,.15,0,.9);
     box(g,1.0,.14,.8,0x8fa3b8,-.6,.5,0); box(g,1.0,.14,.8,0x8fa3b8,.6,.5,0);
     return [g,1.22,.5]; },
+  tv(w){ const g=new THREE.Group(), h=w*0.5625, y=1.35-h/2;
+    box(g,w,h,0.05,0x0c0c0e,0,y,-0.02);
+    box(g,w-0.04,h-0.04,0.006,0x1c2633,0,y+0.02,0.006,.25);
+    
+    return [g,w/2,0.03]; },
   armchair(){ const g=new THREE.Group();
     box(g,.9,.35,.85,0x9c7f6a,0,.15,0,.9);
     box(g,.9,.5,.22,0x8c715c,0,.35,-.32,.9);
@@ -565,6 +570,8 @@ const CATALOG = [
     ['lamp','מנורת עמידה',()=>lamp()],
     ['plantS','עציץ',()=>plantB(1)],
     ['plantL','עציץ גדול',()=>plantB(1.5)],
+    ['tvS','טלוויזיה קטנה על הקיר (43")',()=>F.tv(0.95)],
+    ['tvL','טלוויזיה גדולה על הקיר (65")',()=>F.tv(1.45)],
   ]],
 ];
 const CAT_MAP={}; CATALOG.forEach(([,items])=>items.forEach(([id,name,f])=>CAT_MAP[id]={name,factory:f}));
@@ -635,9 +642,11 @@ const PLACEMENTS = PLACEMENTS_PX.map(([n,f,px,py,r,d])=>[n,f,mx(px),mz(py),r,d])
 
 function oddQuarter(rot){ return Math.abs(Math.round(rot/(Math.PI/2)))%2===1; }
 function applyRot(item,rot){
+  const q=Math.PI/4, k=Math.round(rot/q); if(Math.abs(rot-k*q)<0.01) rot=k*q;
   item.group.rotation.y=rot;
-  const odd=oddQuarter(rot);
-  item.hx=odd?item.bz:item.bx; item.hz=odd?item.bx:item.bz;
+  const c=Math.abs(Math.cos(rot)), sn=Math.abs(Math.sin(rot));
+  const cc=c<1e-6?0:c, ss=sn<1e-6?0:sn;
+  item.hx=cc*item.bx+ss*item.bz; item.hz=ss*item.bx+cc*item.bz;
 }
 function syncCollider(item){
   const c=colliders.find(c=>c.item===item); if(!c) return;
@@ -742,8 +751,9 @@ function saveState(){
     const cols={};
     wallGroups.forEach((ms,i)=>{ const m=ms.find(m=>m.material!==glassMat);
       if(m && m.material!==wallMat) cols[i]='#'+m.material.color.getHexString(); });
-    const items=furniture.filter(f=>f.draggable).map(f=>[f.key,+f.group.position.x.toFixed(2),+f.group.position.z.toFixed(2),+f.group.rotation.y.toFixed(2)]);
-    localStorage.setItem(LS,JSON.stringify({lv:LAYOUT,cols,items}));
+    const items=furniture.filter(f=>f.draggable).map(f=>[f.key,+f.group.position.x.toFixed(2),+f.group.position.z.toFixed(2),+f.group.rotation.y.toFixed(3)]);
+    let pv=PAINT; if(!pv){ try{ pv=(JSON.parse(localStorage.getItem(LS)||'null')||{}).paint; }catch(e){} }
+    localStorage.setItem(LS,JSON.stringify({lv:LAYOUT,cols,items,paint:pv||[]}));
   }catch(e){}
 }
 function clearMovable(){ furniture.filter(f=>f.draggable).forEach(removeItem); }
@@ -940,6 +950,7 @@ function setMode(m){
   $('walkbar').classList.toggle('hidden',m!=='walk');
   $('panbtn').classList.toggle('hidden',m==='walk');
   $('catalog').classList.add('hidden'); release();
+  if(m!=='walk'&&typeof setBrush==='function') setBrush(false);
   if(document.exitPointerLock&&locked) document.exitPointerLock();
   const walking=m==='walk';
   ceil.visible=walking;
@@ -963,7 +974,7 @@ $('btn-start').onclick=()=>{
 function rotateItem(item){
   const oldRot=item.group.rotation.y, p=item.group.position;
   const before=wallPen(item,p.x,p.z);
-  applyRot(item,oldRot+Math.PI/2);
+  applyRot(item,oldRot+Math.PI/4);
   if(wallPen(item,p.x,p.z)>before+1e-4){
     const [fx,fz]=freeSpot(item,p.x,p.z);
     if(wallPen(item,fx,fz)>before+1e-4){ applyRot(item,oldRot); hint('אין מקום לסובב כאן'); return false; }
@@ -1080,6 +1091,7 @@ function tick(){
     let kx=0,ky=0; if(keys.KeyA||keys.ArrowLeft)kx-=1; if(keys.KeyD||keys.ArrowRight)kx+=1; if(keys.KeyW||keys.ArrowUp)ky-=1; if(keys.KeyS||keys.ArrowDown)ky+=1;
     if(kx||ky){ const sp=orbit.r*0.9*dt; const rx=Math.cos(orbit.theta),rz=-Math.sin(orbit.theta),fx=-Math.sin(orbit.theta),fz=-Math.cos(orbit.theta);
       orbit.cx=Math.max(-3,Math.min(22,orbit.cx+(rx*kx-fx*ky)*sp)); orbit.cz=Math.max(-4,Math.min(17,orbit.cz+(rz*kx-fz*ky)*sp)); updateTopCam(); } }
+  paintTick();
   renderer.render(scene,activeCam);
 }
 
@@ -1100,14 +1112,15 @@ function snapshot(){
   const cols={};
   wallGroups.forEach((ms,i)=>{ const m=ms.find(m=>m.material!==glassMat);
     if(m && m.material!==wallMat) cols[i]='#'+m.material.color.getHexString(); });
-  const items=furniture.filter(f=>f.draggable).map(f=>[f.key,+f.group.position.x.toFixed(2),+f.group.position.z.toFixed(2),+f.group.rotation.y.toFixed(2)]);
-  return {lv:LAYOUT,cols,items};
+  const items=furniture.filter(f=>f.draggable).map(f=>[f.key,+f.group.position.x.toFixed(2),+f.group.position.z.toFixed(2),+f.group.rotation.y.toFixed(3)]);
+  return {lv:LAYOUT,cols,items,paint:PAINT||[]};
 }
 function applySnapshot(s){
   if(!s||s.lv!==LAYOUT||!Array.isArray(s.items)) return false;
   release(); select(null);
   wallGroups.forEach(ms=>ms.forEach(m=>{ if(m.material!==glassMat && m.material!==wallMat){ m.material=wallMat; } }));
   Object.entries(s.cols||{}).forEach(([id,c])=>paintWall(+id,c));
+  setPaint(Array.isArray(s.paint)?s.paint:[]);
   clearMovable();
   for(const [key,x,z,r] of s.items){ const d=resolveKey(key); if(d) addItem(d.name,d.factory,x,z,r,true,key); }
   saveState(); return true;
@@ -1124,10 +1137,12 @@ async function doSave(){
   const lastA=localStorage.getItem('apartment3d-author')||'';
   const author=(prompt('השם שלך (לא חובה, יופיע ברשימה הציבורית):',lastA)||'').trim();
   localStorage.setItem('apartment3d-author',author);
+  const snap=snapshot(), tot=(snap.paint||[]).reduce((a,x)=>a+x.p.length,0);
+  if((snap.paint||[]).length>300||tot>12000||JSON.stringify(snap).length>95000){ hint('יש יותר מדי ציורים על הקירות לשמירה גלובלית. מחק חלק ונסה שוב',6000); return; }
   const token=rndTok();
   hint('שומר...',8000);
   try{
-    const r=await api('/saves',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,author,token,data:snapshot()})});
+    const r=await api('/saves',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,author,token,data:snap})});
     const t=myTokens(); t[r.id]=token; localStorage.setItem(TK,JSON.stringify(t));
     hint('נשמר: '+name+' (ייתכן שיופיע ברשימה אחרי כדקה)',5000);
   }catch(e){ hint('השמירה נכשלה: '+(navigator.onLine?e.message:'אין חיבור'),5000); }
@@ -1169,3 +1184,142 @@ async function openLoad(){
 $('btn-save').onclick=doSave;
 $('btn-load').onclick=openLoad;
 $('load-close').onclick=()=>$('loadsheet').classList.add('hidden');
+
+
+// ---------- wall brush (walk mode): lines, shapes and freehand on walls ----------
+var PAINT, paintGroup=null, penDown=false, penStart=null, penCur=null, brushOn=false;
+var tool='brush', brushR=0.035;
+const decalMats={};
+const decalMat=c=>decalMats[c]||(decalMats[c]=new THREE.MeshStandardMaterial({color:c,roughness:.92,polygonOffset:true,polygonOffsetFactor:-3,polygonOffsetUnits:-3}));
+const dabGeo=new THREE.CircleGeometry(1,14), quadGeo=new THREE.PlaneGeometry(1,1);
+function basisFor(nx,nz){
+  const n=new THREE.Vector3(nx,0,nz), x=new THREE.Vector3(0,1,0).cross(n).normalize(), y=n.clone().cross(x);
+  return {n,x,y};
+}
+function decal(geo,c,B,pos,sx,sy,rot,off){
+  const m=new THREE.Mesh(geo,decalMat(c));
+  const q=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(B.x,B.y,B.n));
+  m.quaternion.copy(q); m.position.copy(pos).addScaledVector(B.n,0.004+off);
+  if(rot) m.rotateZ(rot);
+  m.scale.set(sx,sy,1); return m;
+}
+function strokeMesh(st,idx){
+  const g=new THREE.Group(), B=basisFor(st.n[0],st.n[1]), off=(idx%40)*0.0002, r=st.r;
+  const P=[]; for(let i=0;i+2<st.p.length;i+=3) P.push(new THREE.Vector3(st.p[i],st.p[i+1],st.p[i+2]));
+  if(!P.length) return g;
+  const uv=p=>[p.dot(B.x),p.y];
+  if(st.k==='b'){
+    let last=null;
+    for(let i=0;i<P.length;i++){
+      const a=P[i], b=P[i+1]||P[i];
+      const d=a.distanceTo(b), n=Math.max(1,Math.ceil(d/(r*0.6)));
+      for(let j=0;j<(i===P.length-1?1:n);j++) g.add(decal(dabGeo,st.c,B,a.clone().lerp(b,j/n),r,r,0,off));
+    }
+  } else if(st.k==='l'&&P.length>1){
+    const [a,b]=[P[0],P[1]], [u0,v0]=uv(a),[u1,v1]=uv(b), len=Math.hypot(u1-u0,v1-v0), ang=Math.atan2(v1-v0,u1-u0);
+    g.add(decal(quadGeo,st.c,B,a.clone().lerp(b,.5),len,2*r,ang,off));
+    g.add(decal(dabGeo,st.c,B,a,r,r,0,off)); g.add(decal(dabGeo,st.c,B,b,r,r,0,off));
+  } else if(st.k==='r'&&P.length>1){
+    const [a,b]=[P[0],P[1]], [u0,v0]=uv(a),[u1,v1]=uv(b);
+    g.add(decal(quadGeo,st.c,B,a.clone().lerp(b,.5),Math.abs(u1-u0)||.01,Math.abs(v1-v0)||.01,0,off));
+  } else if(st.k==='c'&&P.length>1){
+    const R=Math.max(.02,P[0].distanceTo(P[1]));
+    g.add(decal(dabGeo,st.c,B,P[0],R,R,0,off));
+  }
+  return g;
+}
+function setPaint(arr){
+  if(paintGroup){ scene.remove(paintGroup); }
+  PAINT=arr; paintGroup=new THREE.Group(); scene.add(paintGroup);
+  PAINT.forEach((st,i)=>paintGroup.add(strokeMesh(st,i)));
+}
+function addStroke(st){
+  PAINT.push(st); paintGroup.add(strokeMesh(st,PAINT.length-1)); saveState();
+}
+function aimPoint(){
+  ray.setFromCamera(new THREE.Vector2(0,0),walkCam);
+  const hits=ray.intersectObjects(paintables.filter(m=>m.material!==glassMat),false);
+  const h=hits[0]; if(!h||h.distance>5||!h.face) return null;
+  const n=h.face.normal; if(Math.abs(n.y)>0.5) return null;
+  return {p:h.point.clone(),nx:Math.round(n.x),nz:Math.round(n.z),wallId:h.object.userData.wallId};
+}
+const rnd=v=>Math.round(v*100)/100;
+var liveMesh=null, liveStroke=null;
+function showLive(st){
+  if(liveMesh){ scene.remove(liveMesh); liveMesh=null; }
+  if(st){ liveMesh=strokeMesh(st,PAINT.length); scene.add(liveMesh); }
+}
+function sameSurface(a,b){
+  if(a.nx!==b.nx||a.nz!==b.nz) return false;
+  return a.nx? Math.abs(a.p.x-b.p.x)<0.03 : Math.abs(a.p.z-b.p.z)<0.03;
+}
+function paintTick(){
+  if(mode!=='walk'||!brushOn||!penDown||tool==='wall') return;
+  const a=aimPoint(); if(!a) return;
+  if(tool==='brush'){
+    if(!liveStroke||!sameSurface(liveStroke.a,a)){
+      if(liveStroke) finishStroke();
+      liveStroke={a,st:{k:'b',c:paintColor,r:brushR,n:[a.nx,a.nz],p:[]}};
+    }
+    const p=liveStroke.st.p, n=p.length;
+    if(n===0||Math.hypot(a.p.x-p[n-3],a.p.y-p[n-2],a.p.z-p[n-1])>=0.04){
+      if(n<1200){ p.push(rnd(a.p.x),rnd(a.p.y),rnd(a.p.z)); showLive(liveStroke.st); } else { finishStroke(); setPen(false); hint('הקו ארוך מדי, התחל קו חדש'); }
+    }
+  } else if(penStart){
+    if(sameSurface(penStart,a)){
+      penCur=a; showLive({k:tool==='line'?'l':tool==='rect'?'r':'c',c:paintColor,r:brushR,n:[a.nx,a.nz],p:[rnd(penStart.p.x),rnd(penStart.p.y),rnd(penStart.p.z),rnd(a.p.x),rnd(a.p.y),rnd(a.p.z)]});
+    }
+  }
+}
+function finishStroke(){
+  if(liveStroke){ if(liveStroke.st.p.length>=3) addStroke(liveStroke.st); liveStroke=null; }
+  showLive(null);
+}
+function setPen(on){
+  penDown=on; $('btn-pen').textContent=on?(tool==='brush'?'⏹ סיים קו':'⏹ סיים'):(tool==='wall'?'🖌 צבע קיר':'✏️ צייר');
+  $('btn-pen').classList.toggle('active',on);
+}
+function penPress(){
+  if(mode!=='walk'||!brushOn) return;
+  if(tool==='wall'){ const a=aimPoint(); if(a) paintWall(a.wallId,paintColor); else hint('כוון אל קיר'); return; }
+  if(tool==='brush'){
+    if(penDown){ finishStroke(); setPen(false); } else { const a=aimPoint(); if(!a){ hint('כוון אל קיר'); return; } setPen(true); }
+    return;
+  }
+  // line / rect / circle: press once for the start, again for the end
+  if(!penStart){ const a=aimPoint(); if(!a){ hint('כוון אל קיר'); return; } penStart=a; penCur=null; setPen(true); hint('כוון לנקודת הסיום ולחץ שוב'); }
+  else {
+    if(penCur){ addStroke({k:tool==='line'?'l':tool==='rect'?'r':'c',c:paintColor,r:brushR,n:[penStart.nx,penStart.nz],p:[rnd(penStart.p.x),rnd(penStart.p.y),rnd(penStart.p.z),rnd(penCur.p.x),rnd(penCur.p.y),rnd(penCur.p.z)]}); }
+    else hint('הנקודה השנייה חייבת להיות על אותו קיר');
+    penStart=null; penCur=null; showLive(null); setPen(false);
+  }
+}
+function cancelPen(){ liveStroke=null; penStart=null; penCur=null; showLive(null); setPen(false); }
+function setTool(t){
+  cancelPen(); tool=t;
+  document.querySelectorAll('.tl').forEach(b=>b.classList.toggle('sel',b.dataset.t===t));
+  setPen(false);
+}
+function setBrush(on){
+  brushOn=on; if(!on) cancelPen();
+  $('brushbar').classList.toggle('hidden',!on);
+  $('btn-brush').classList.toggle('active',on);
+  if(on) hint('כוון אל קיר ולחץ ✏️ צייר, ואז הזז את המבט');
+}
+// UI wiring
+(function(){
+  const sw=$('bb-swatches');
+  SWATCHES.forEach(c=>{ const b=document.createElement('div'); b.className='swatch'; b.style.background=c;
+    b.onclick=()=>{ paintColor=c; sw.querySelectorAll('.swatch').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); }; sw.appendChild(b); });
+  $('bb-color').oninput=e=>{ paintColor=e.target.value; sw.querySelectorAll('.swatch').forEach(x=>x.classList.remove('sel')); };
+  document.querySelectorAll('.tl').forEach(b=>b.onclick=()=>setTool(b.dataset.t));
+  document.querySelectorAll('.sz').forEach(b=>b.onclick=()=>{ brushR=+b.dataset.r; document.querySelectorAll('.sz').forEach(x=>x.classList.toggle('sel',x===b)); });
+  $('btn-pen').onclick=penPress;
+  $('btn-brush').onclick=()=>setBrush(!brushOn);
+  $('btn-pundo').onclick=()=>{ if(penDown||penStart){ cancelPen(); return; } if(!PAINT.length) return; PAINT.pop(); setPaint(PAINT); saveState(); hint('בוטל'); };
+  $('btn-pclear').onclick=()=>{ if(!PAINT.length) return; if(!confirm('למחוק את כל הציורים על הקירות?')) return; setPaint([]); saveState(); };
+  addEventListener('keydown',e=>{ if(e.code==='KeyE'&&mode==='walk'&&brushOn) penPress(); });
+  try{ const s=JSON.parse(localStorage.getItem(LS)||'null'); setPaint(s&&Array.isArray(s.paint)?s.paint:[]); }catch(e){ setPaint([]); }
+  const oldSet=setMode;
+})();
+window.__apt.penPress=penPress; window.__apt.setBrush=setBrush; window.__apt.setTool=setTool; window.__apt.aimPoint=aimPoint; window.__apt.getPaint=()=>PAINT;
