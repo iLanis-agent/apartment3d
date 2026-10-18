@@ -31,8 +31,24 @@
   </div>
 
   <div id="arrangebar" class="hidden">
+    <button id="btn-add">➕ הוסף</button>
     <button id="btn-rotate">↻ סובב</button>
-    <button id="btn-reset">איפוס סידור</button>
+    <button id="btn-remove">🗑 הסר</button>
+    <button id="btn-reset">איפוס</button>
+  </div>
+
+  <div id="walkbar">
+    <button id="btn-grab">✋ אחוז</button>
+    <button id="btn-walk-add">➕ הוסף</button>
+    <button id="btn-walk-rot" class="hidden">↻ סובב</button>
+    <button id="btn-walk-del" class="hidden">🗑 הסר</button>
+  </div>
+  <div id="panbtn" class="hidden"><button id="btn-pan" title="הזז מבט">✥ הזז מבט</button></div>
+
+  <div id="catalog" class="hidden">
+    <div id="cat-head"><b>קטלוג רהיטים</b><button id="cat-close">✕</button></div>
+    <div id="cat-tabs"></div>
+    <div id="cat-grid"></div>
   </div>
 
   <div id="hint"></div>
@@ -52,7 +68,8 @@
         </div>
         <div>
           <h3>🛋️ רהיטים</h3>
-          <p>מבט מלמעלה. גע/לחץ על רהיט ובחר אותו, גרור כדי להזיז, ↻ לסיבוב.</p>
+          <p>מבט מלמעלה. גרור רהיט להזזה (לא עובר דרך קירות). ➕ קטלוג להוספה, ↻ סיבוב, 🗑 הסרה. ✥ הזז מבט, או שתי אצבעות: זום והזזה.</p>
+          <p><b>במצב הליכה:</b> כוון לרהיט ולחץ ✋ אחוז כדי לשאת אותו, ➕ להוספה.</p>
         </div>
         <div>
           <h3>🎨 צביעה</h3>
@@ -64,6 +81,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="app.js?v=10"></script>
+<script type="module" src="app.js?v=11"></script>
 </body>
 </html>
