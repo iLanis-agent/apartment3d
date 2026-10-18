@@ -11,12 +11,12 @@ html,body,#app { width:100%; height:100%; overflow:hidden; background:#1a1d22;
 #title { color:#fff; font-weight:700; font-size:17px; text-shadow:0 1px 4px rgba(0,0,0,.6); }
 #title span { color:#8ecdf0; font-weight:300; }
 #modes { display:flex; gap:6px; margin-inline-start:auto; }
-.mode, #btn-help, #btn-rotate, #btn-reset, #btn-paint-center {
+.mode, #btn-help, #btn-north, #btn-rotate, #btn-reset, #btn-paint-center {
   border:1px solid rgba(255,255,255,.25); background:rgba(20,22,26,.72); color:#eee;
   border-radius:20px; padding:8px 14px; font-size:14px; cursor:pointer;
   backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
 .mode.active { background:#2f7fc4; border-color:#5fb0ef; color:#fff; }
-#btn-help { border-radius:50%; width:36px; height:36px; padding:0; font-weight:700; }
+#btn-help, #btn-north { border-radius:50%; width:36px; height:36px; padding:0; font-weight:700; }
 
 #palette { position:absolute; bottom:calc(14px + env(safe-area-inset-bottom)); right:50%; transform:translateX(50%);
   display:flex; align-items:center; gap:8px; background:rgba(20,22,26,.78); border:1px solid rgba(255,255,255,.2);
