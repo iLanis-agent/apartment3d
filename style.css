@@ -95,3 +95,12 @@ html,body,#app { width:100%; height:100%; overflow:hidden; background:#1a1d22;
 #savebar button, #loadsheet button { background:rgba(30,34,40,.88); color:#fff; border:1px solid rgba(255,255,255,.28); border-radius:10px; font-family:inherit; }
 #loadsheet button { padding:8px 14px; font-size:15px; }
 #loadsheet button:disabled { opacity:.4; }
+
+#brushbar { position:absolute; left:8px; right:8px; bottom:calc(66px + env(safe-area-inset-bottom)); z-index:21; display:flex; flex-direction:column; gap:6px;
+  background:rgba(24,27,32,.9); border:1px solid rgba(255,255,255,.2); border-radius:14px; padding:8px; max-width:520px; margin:0 auto; }
+.bb-row { display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:center; }
+#brushbar .swatches { flex-wrap:wrap; justify-content:center; }
+#brushbar .swatch { width:24px; height:24px; }
+#brushbar button { padding:6px 10px; font-size:13px; background:rgba(40,45,52,.95); color:#fff; border:1px solid rgba(255,255,255,.28); border-radius:10px; font-family:inherit; }
+#brushbar button.sel, #brushbar button.active, #btn-brush.active { background:#2f7fc4; border-color:#5fb0ef; }
+#btn-pen { font-weight:700; }
