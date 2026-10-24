@@ -685,6 +685,7 @@ const hl = new THREE.BoxHelper(undefined, 0x3fa7ff);
 hl.visible=false; scene.add(hl);
 let selected=null;
 let held=null, panMode=false, orbMid=null, dragOff={x:0,z:0};
+let furnLocked=localStorage.getItem('apartment3d-lock')==='1';
 // wall-aware furniture movement: furniture can never be dragged or carried through walls
 function wallPen(item,x,z){
   const hx=item.hx,hz=item.hz; let pen=0;
@@ -839,8 +840,9 @@ canvas.addEventListener('pointerdown',e=>{
   } else {
     tapInfo={x:e.clientX,y:e.clientY,t:performance.now()};
     const hit=pick(e.clientX,e.clientY,pickMeshes);
-    dragItem=(mode==='arrange'&&!panMode&&e.button===0&&!e.shiftKey&&hit&&hit.object.userData.item.draggable)?hit.object.userData.item:null;
+    dragItem=(mode==='arrange'&&!panMode&&!furnLocked&&e.button===0&&!e.shiftKey&&hit&&hit.object.userData.item.draggable)?hit.object.userData.item:null;
     if(dragItem){ const fp=floorPoint(e.clientX,e.clientY); if(fp){ dragOff={x:fp.x-dragItem.group.position.x,z:fp.z-dragItem.group.position.z}; } else dragOff={x:0,z:0}; select(dragItem); }
+    else if(mode==='arrange'&&furnLocked&&hit&&hit.object.userData.item.draggable) hint('הרהיטים נעולים - לחץ על 🔒 בראש המסך לביטול');
   }
 });
 canvas.addEventListener('pointermove',e=>{
@@ -972,6 +974,7 @@ $('btn-start').onclick=()=>{
   if(mode==='walk'&&!isTouch) canvas.requestPointerLock();
 };
 function rotateItem(item){
+  if(furnLocked){ hint('הרהיטים נעולים - בטל את הנעילה כדי לסובב'); return false; }
   const oldRot=item.group.rotation.y, p=item.group.position;
   const before=wallPen(item,p.x,p.z);
   applyRot(item,oldRot+Math.PI/4);
@@ -985,6 +988,7 @@ function rotateItem(item){
 function rotateSelected(){ if(selected&&selected.draggable) rotateItem(selected); }
 function removeSelected(){
   if(!selected) return;
+  if(furnLocked){ hint('הרהיטים נעולים - בטל את הנעילה כדי להסיר'); return; }
   if(!selected.draggable){ hint('רהיט קבוע - אי אפשר להסיר'); return; }
   const n=selected.name; removeItem(selected); select(null); saveState(); hint('הוסר: '+n);
 }
@@ -998,6 +1002,7 @@ function updateWalkBtns(){
 }
 function release(){ if(held){ held=null; saveState(); } if(typeof updateWalkBtns==='function') updateWalkBtns(); hl.visible=false; }
 function grab(){
+  if(furnLocked){ hint('הרהיטים נעולים - בטל את הנעילה כדי להזיז'); return; }
   ray.setFromCamera(new THREE.Vector2(0,0),walkCam);
   const hits=ray.intersectObjects(pickMeshes.filter(m=>m.userData.item.draggable),false);
   const h=hits[0];
@@ -1005,8 +1010,19 @@ function grab(){
   held=h.object.userData.item; updateWalkBtns(); hint(held.name+' - הזז כדי לשאת, ↻ לסיבוב, שחרר להנחה',3500);
 }
 $('btn-grab').onclick=()=>{ if(held) { release(); hint('הונח'); } else grab(); };
+
+// ----- furniture movement lock -----
+function setFurnLock(v,quiet){
+  furnLocked=!!v;
+  try{ localStorage.setItem('apartment3d-lock',furnLocked?'1':'0'); }catch(e){}
+  const b=$('btn-lock'); if(b){ b.textContent=furnLocked?'🔒':'🔓'; b.classList.toggle('active',furnLocked); }
+  if(furnLocked&&held) release();
+  if(!quiet) hint(furnLocked?'הרהיטים נעולים - לא ניתן להזיז אותם':'נעילת הרהיטים בוטלה');
+}
+const lockBtn=$('btn-lock'); if(lockBtn) lockBtn.onclick=()=>setFurnLock(!furnLocked);
+setFurnLock(furnLocked,true);
 $('btn-walk-rot').onclick=()=>{ if(held) rotateItem(held); };
-$('btn-walk-del').onclick=()=>{ if(!held) return; const it=held; held=null; removeItem(it); saveState(); updateWalkBtns(); hint('הוסר: '+it.name); };
+$('btn-walk-del').onclick=()=>{ if(!held) return; if(furnLocked){ hint('הרהיטים נעולים - בטל את הנעילה כדי להסיר'); return; } const it=held; held=null; removeItem(it); saveState(); updateWalkBtns(); hint('הוסר: '+it.name); };
 function carryStep(){
   if(!held) return;
   const d=holdDist(held), tx=player.x-Math.sin(player.yaw)*d, tz=player.z-Math.cos(player.yaw)*d;
@@ -1025,8 +1041,9 @@ function buildCatalog(){
     b.innerHTML='<b>'+name+'</b><span>'+(hx*2).toFixed(1)+' × '+(hz*2).toFixed(1)+' מ׳</span>';
     b.onclick=()=>addFromCatalog(id); grid.appendChild(b); });
 }
-function openCatalog(){ buildCatalog(); $('catalog').classList.remove('hidden'); }
+function openCatalog(){ if(furnLocked){ hint('הרהיטים נעולים - בטל את הנעילה כדי להוסיף'); return; } buildCatalog(); $('catalog').classList.remove('hidden'); }
 function addFromCatalog(id){
+  if(furnLocked){ hint('הרהיטים נעולים - בטל את הנעילה כדי להוסיף'); return; }
   const d=CAT_MAP[id]; if(!d) return;
   $('catalog').classList.add('hidden');
   let x,z;
@@ -1043,6 +1060,7 @@ $('cat-close').onclick=()=>$('catalog').classList.add('hidden');
 $('btn-pan').onclick=()=>{ panMode=!panMode; $('btn-pan').classList.toggle('active',panMode); hint(panMode?'גרור באצבע אחת כדי להזיז את המבט':'גרור לסיבוב. שתי אצבעות: זום והזזה'); };
 $('btn-rotate').onclick=rotateSelected;
 $('btn-reset').onclick=()=>{
+  if(furnLocked){ hint('הרהיטים נעולים - בטל את הנעילה כדי לאפס את הסידור'); return; }
   localStorage.removeItem(LS); release(); select(null);
   clearMovable();
   PLACEMENTS.forEach(([n,f,x,z,r,d],i)=>{ if(d) addItem(n,f,x,z,r,true,'h'+i); });
@@ -1095,7 +1113,7 @@ function tick(){
   renderer.render(scene,activeCam);
 }
 
-window.__apt={moveItemTo,wallPen,addFromCatalog,openCatalog,removeItem,addItem,rotateItem,panView,grab,release,get held(){return held;},get selected(){return selected;},select,CAT_MAP,CATALOG,topCam,player,orbit,colliders,furniture,setMode,paintWall,wallGroups,mx,mz,resetView,updateTopCam,THREE};
+window.__apt={moveItemTo,wallPen,addFromCatalog,openCatalog,removeItem,addItem,rotateItem,panView,grab,release,get held(){return held;},get selected(){return selected;},select,CAT_MAP,CATALOG,topCam,player,orbit,colliders,furniture,setMode,paintWall,wallGroups,mx,mz,resetView,updateTopCam,THREE,get furnLocked(){return furnLocked;},setFurnLock};
 loadState();
 $('walkbar').classList.remove('hidden'); $('panbtn').classList.add('hidden'); updateWalkBtns();
 ceil.visible=true;
